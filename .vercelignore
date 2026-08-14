@@ -1,0 +1,8 @@
+# Kept in the repo for reference, not served on the public site.
+classic.html
+assets/styles.css
+assets/site.js
+
+# Local tooling, not part of the deployed site.
+tools/
+README.md
