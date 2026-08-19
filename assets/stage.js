@@ -24,11 +24,12 @@
      output for the apps.apple.com URL the day the listing goes live. */
   var APP_STORE_URL = 'https://speakitapp.ca';
 
-  /* The launch discount on annual Pro. `SUMMER_SALE_ENABLED` must not be true
-     unless App Store Connect really is charging the sale price — the page
-     prints the number, and a page that disagrees with the sheet is a refund.
-     No end date is published: the site states the discount, not a deadline, so
-     the offer can be ended or extended without the page having lied. */
+  /* The launch discount on Pro — half off both plans, $3.99 → $1.99 a month
+     and $29.99 → $14.99 a year. `SUMMER_SALE_ENABLED` must not be true unless
+     App Store Connect really is charging the sale prices — the page prints
+     the numbers, and a page that disagrees with the sheet is a refund. No end
+     date is published: the site states the discount, not a deadline, so the
+     offer can be ended or extended without the page having lied. */
   var SUMMER_SALE_ENABLED = true;
   var REFERRALS_ENABLED = false;
 
@@ -65,7 +66,7 @@
   document.querySelectorAll('[data-sale-only]').forEach(function (el) {
     el.hidden = !SUMMER_SALE_ENABLED;
   });
-  document.querySelectorAll('[data-current-annual]').forEach(function (el) {
+  document.querySelectorAll('[data-sale-price]').forEach(function (el) {
     el.hidden = !SUMMER_SALE_ENABLED;
   });
   document.querySelectorAll('[data-after-sale]').forEach(function (el) {
@@ -74,6 +75,46 @@
   document.querySelectorAll('[data-referrals]').forEach(function (el) {
     el.hidden = !REFERRALS_ENABLED;
   });
+
+  /* ========================== the download sheet ========================== */
+
+  /* The bar's Download opens the sheet — QR on one side, App Store on the
+     other — instead of scrolling to the offer. The <dialog> does the modal
+     work itself (focus, Escape, inertness of the page); this only opens it,
+     closes it on a backdrop click, and keeps the page from scrolling under
+     it. A browser without showModal() keeps the link's own href. */
+  var dlSheet = document.querySelector('[data-download]');
+
+  if (dlSheet && typeof dlSheet.showModal === 'function') {
+    var dlOpen = function (event) {
+      event.preventDefault();
+      dlSheet.showModal();
+      document.documentElement.classList.add('is-dl-open');
+      window.requestAnimationFrame(function () { dlSheet.classList.add('is-in'); });
+    };
+    var dlSettle = function () {
+      dlSheet.classList.remove('is-in');
+      document.documentElement.classList.remove('is-dl-open');
+    };
+    var dlClose = function () {
+      dlSettle();
+      if (dlSheet.open) dlSheet.close();
+    };
+
+    document.querySelectorAll('[data-download-open]').forEach(function (el) {
+      el.addEventListener('click', dlOpen);
+    });
+    document.querySelectorAll('[data-download-close]').forEach(function (el) {
+      el.addEventListener('click', dlClose);
+    });
+    /* a click on the dimmed page, not on the sheet's own contents */
+    dlSheet.addEventListener('click', function (event) {
+      if (event.target === dlSheet) dlClose();
+    });
+    /* Escape arrives as `cancel` and then `close`; both end here */
+    dlSheet.addEventListener('cancel', dlSettle);
+    dlSheet.addEventListener('close', dlSettle);
+  }
 
   /* ========================== the spoken thoughts ========================= */
 
@@ -986,6 +1027,27 @@
     reveals.forEach(function (el) { el.classList.add('is-in'); });
     return;
   }
+
+  /* Titles that settle a word at a time. Only headings that are plain text
+     are split — one with markup inside is left whole rather than guessed at —
+     and the split happens here, after the reduced-motion exit, so a reader
+     who has asked for stillness gets the heading exactly as it was written.
+     The words are separated by ordinary spaces in the DOM, so nothing changes
+     for a screen reader or for find-in-page. */
+  document.querySelectorAll('[data-words]').forEach(function (el) {
+    if (el.children.length) return;
+    var words = el.textContent.trim().split(/\s+/);
+    if (words.length < 2) return;
+    el.textContent = '';
+    words.forEach(function (word, n) {
+      if (n) el.appendChild(document.createTextNode(' '));
+      var span = document.createElement('span');
+      span.className = 'w';
+      span.style.setProperty('--w', n);
+      span.textContent = word;
+      el.appendChild(span);
+    });
+  });
 
   var appear = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {

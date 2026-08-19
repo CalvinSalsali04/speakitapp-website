@@ -34,9 +34,42 @@
     <span>Speak It</span>
   </a>
 
-  <a class="topbar__cta" href="#get">Download</a>
+  <a class="topbar__cta" href="#get" data-download-open>Download</a>
   <span class="topbar__progress" aria-hidden="true"></span>
 </header>
+
+<!-- The download sheet. The bar's Download opens this instead of scrolling to
+     the offer: a QR to scan from a computer, or a button that opens the App
+     Store, on one dimmed layer over the page. It is a native <dialog>, so it
+     is modal, traps focus and closes on Escape without any script for that;
+     stage.js opens it and closes it on a backdrop click. Without JS, or on a
+     browser without showModal(), the link still goes to #get. On a phone the
+     QR half is dropped — a phone cannot scan itself — leaving the button. -->
+<dialog class="dl" data-download aria-labelledby="dl-title">
+  <!-- outside .dl__inner: that block is translated, which would make it the
+       containing block for a fixed button and pin the × to the block's corner
+       instead of the screen's -->
+  <button class="dl__close" type="button" data-download-close aria-label="Close">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M6 6l12 12M18 6 6 18"/>
+    </svg>
+  </button>
+  <div class="dl__inner">
+    <h2 class="u-sr" id="dl-title">Download Speak It</h2>
+
+    <div class="dl__side dl__side--qr">
+      <p class="dl__label">Scan the QR code:</p>
+      <img class="dl__qr" src="assets/img/qr.svg" alt="QR code that opens the Speak It download page" width="300" height="300">
+    </div>
+
+    <span class="dl__rule" aria-hidden="true"></span>
+
+    <div class="dl__side">
+      <p class="dl__label">Open in App Store:</p>
+      <a class="dl__btn" data-appstore href="#" rel="noopener">Open App Store</a>
+    </div>
+  </div>
+</dialog>
 
 <!-- The app's own listening indicator. It is held over the gap in the headline
      for the length of the opening and fades out as the last thought goes into
@@ -84,12 +117,12 @@
         <p class="bubble bubble--r" style="--a:83deg;--rr:1.02;--s:.82;--i:12"><span>ask Priya about Q3</span></p>
         <p class="bubble"           style="--a:108deg;--rr:1.00;--s:.98;--i:6"><span>book the dentist</span></p>
         <p class="bubble bubble--r" style="--a:134deg;--rr:1.07;--s:.88;--i:0"><span>bins out when I get home</span></p>
-        <p class="bubble"           style="--a:159deg;--rr:1.04;--s:.84;--i:10"><span>Dr. Reyes — 0207 946 0112</span></p>
+        <p class="bubble"           style="--a:159deg;--rr:1.04;--s:.84;--i:10"><span>Dr. Reyes — 416 555 0142</span></p>
         <p class="bubble bubble--r" style="--a:185deg;--rr:1.00;--s:1.00;--i:4"><span>parking: level 3, row H</span></p>
         <p class="bubble"           style="--a:210deg;--rr:1.06;--s:.90;--i:13"><span>renew the passport</span></p>
         <p class="bubble bubble--r" style="--a:236deg;--rr:1.02;--s:.82;--i:7"><span>Sam’s partner is Nadia</span></p>
-        <p class="bubble"           style="--a:261deg;--rr:1.00;--s:.94;--i:2"><span>they hate coriander</span></p>
-        <p class="bubble bubble--r" style="--a:287deg;--rr:1.07;--s:.86;--i:11"><span>flight lands 21:40</span></p>
+        <p class="bubble"           style="--a:261deg;--rr:1.00;--s:.94;--i:2"><span>Nadia hates cilantro</span></p>
+        <p class="bubble bubble--r" style="--a:287deg;--rr:1.07;--s:.86;--i:11"><span>flight lands at 9:40</span></p>
         <p class="bubble"           style="--a:312deg;--rr:1.03;--s:.92;--i:5"><span>the spare key is with Tom</span></p>
         <p class="bubble bubble--r" style="--a:338deg;--rr:1.01;--s:.84;--i:8"><span>the bakery on Cross Street</span></p>
       </div>
@@ -171,7 +204,7 @@
     <div class="shell">
       <header class="section__head section__head--centre reveal">
         <p class="eyebrow">What happens</p>
-        <h2 class="section__title">Say it. It lands where it belongs.</h2>
+        <h2 class="section__title" data-words>Say it. It lands where it belongs.</h2>
       </header>
 
       <div class="scene" data-scene>
@@ -308,7 +341,7 @@
     <div class="shell">
       <header class="section__head section__head--centre reveal">
         <p class="eyebrow">Try it</p>
-        <h2 class="section__title">Say something.</h2>
+        <h2 class="section__title" data-words>Say something.</h2>
         <p class="section__sub">Then watch where it goes.</p>
       </header>
 
@@ -363,8 +396,8 @@
             <button class="chip" type="button" data-demo-example="Take the bins out when I get home">A place, not a time</button>
             <button class="chip" type="button" data-demo-example="Remind me to book the dentist before the 20th">Book the dentist</button>
             <button class="chip" type="button" data-demo-example="Idea — let people search by the words they actually said">An idea</button>
-            <button class="chip" type="button" data-demo-example="Dr. Reyes at the surgery is on 0207 946 0112">A phone number</button>
-            <button class="chip" type="button" data-demo-example="Sam's partner is called Nadia and they hate coriander">About a person</button>
+            <button class="chip" type="button" data-demo-example="Dr. Reyes at the clinic is on 416 555 0142">A phone number</button>
+            <button class="chip" type="button" data-demo-example="Sam's partner is called Nadia and they hate cilantro">About a person</button>
           </div>
         </div>
 
@@ -414,7 +447,7 @@
     <div class="shell">
       <header class="section__head section__head--centre reveal">
         <p class="eyebrow">Two screens</p>
-        <h2 class="section__title">Today does. Memory knows.</h2>
+        <h2 class="section__title" data-words>Today does. Memory knows.</h2>
         <p class="section__sub">There is nowhere else for a thought to go, so there is nothing for you to file.</p>
       </header>
 
@@ -459,7 +492,7 @@
     <div class="shell">
       <header class="section__head section__head--centre reveal">
         <p class="eyebrow">Where it starts</p>
-        <h2 class="section__title">Seven ways in.</h2>
+        <h2 class="section__title" data-words>Seven ways in.</h2>
         <p class="section__sub">Every one starts a capture without you finding an icon first.</p>
       </header>
 
@@ -584,7 +617,7 @@
   <!-- ————————————————————————————— The offer ————————————————————————————— -->
   <section class="finale" id="get">
     <div class="finale__inner">
-      <h2 class="finale__title reveal">Ten captures free. No account either way.</h2>
+      <h2 class="finale__title reveal" data-words>Ten captures free. No account either way.</h2>
       <p class="finale__lede reveal" data-sale-only hidden>Pro is half price while Speak It launches.</p>
 
       <div class="plans">
@@ -600,17 +633,25 @@
         <div class="plan plan--pro reveal">
           <h3 class="plan__name">
             Pro
-            <span class="plan__tag" data-sale-only hidden>50% off annual</span>
+            <span class="plan__tag" data-sale-only hidden>50% off at launch</span>
           </h3>
           <div class="plan__prices">
+            <!-- Both plans carry the launch discount. Each price is written
+                 three ways — the regular price struck through, the sale price,
+                 and the regular price on its own — and stage.js shows the pair
+                 that matches `SUMMER_SALE_ENABLED`, so ending the sale is one
+                 flag and not four edits. -->
             <p class="plan__price">
               <span class="plan__billing">Monthly</span>
-              $1.99 <span class="plan__period">/ month</span>
+              <s class="plan__was" data-sale-only hidden>$3.99</s>
+              <span data-sale-price>$1.99</span>
+              <span data-after-sale hidden>$3.99</span>
+              <span class="plan__period">/ month</span>
             </p>
             <p class="plan__price">
               <span class="plan__billing">Annual · Best value</span>
               <s class="plan__was" data-sale-only hidden>$29.99</s>
-              <span data-current-annual>$14.99</span>
+              <span data-sale-price>$14.99</span>
               <span data-after-sale hidden>$29.99</span>
               <span class="plan__period">/ year</span>
             </p>
@@ -619,7 +660,7 @@
             <li>Unlimited captures — that is the whole difference</li>
             <li>Nothing you saved is locked away if you stop</li>
           </ul>
-          <p class="plan__note" data-sale-only hidden>US pricing. The launch price holds as long as the subscription does.</p>
+          <p class="plan__note" data-sale-only hidden>US pricing. Regularly $3.99 a month or $29.99 a year; the launch price holds as long as the subscription does.</p>
           <p class="plan__note">Renews automatically until cancelled.</p>
         </div>
       </div>
@@ -676,6 +717,7 @@
     <a href="#try">Try it</a>
     <a href="#get">Pricing</a>
     <a href="support/">Support</a>
+    <a href="mailto:support@speakitapp.ca">Email us</a>
   </nav>
 
   <p class="footer__legal">© 2026 Speak It · Made by one person · iPhone and App Store are trademarks of Apple Inc.</p>

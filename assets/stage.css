@@ -382,6 +382,16 @@ main { position: relative; z-index: 2; }
   left: 50%;
   translate: -50% 0;
   z-index: 2;
+  /* The same paper the headline carries, at label size. The eyebrow sits in
+     the top edge's fade, where a thought swinging past twelve is still at
+     most of its strength, and eleven letters of tracked small caps over a
+     moving bubble was the one place on the page that was hard to read. */
+  padding: 8px 40px;
+  margin-top: -8px;
+  background: radial-gradient(50% 50% at 50% 50%,
+    rgb(var(--bg-rgb)) 0 60%,
+    rgb(var(--bg-rgb) / .9) 78%,
+    rgb(var(--bg-rgb) / 0) 100%);
 }
 
 /* One centred stack: headline, standfirst, and the slot the download block
@@ -396,6 +406,14 @@ main { position: relative; z-index: 2; }
 }
 
 .hero__title {
+  /* Above the foot's paper. The foot's disc is 165% of the foot's height and
+     centred on it, so its top third reaches up over the second headline line —
+     and, painted later in the same stacking context, it was painting over the
+     type: "you forget it." arrived with its lower half dissolved into the page
+     on every viewport, and almost entirely on a phone. One layer up, and the
+     disc still dissolves the thoughts that cross it, just underneath the words. */
+  position: relative;
+  z-index: 1;
   display: grid;
   justify-items: center;
   font-size: clamp(38px, 6.6vw, 82px);
@@ -1739,6 +1757,125 @@ main { position: relative; z-index: 2; }
 }
 .footer__legal { font-size: 11px; color: var(--muted); }
 
+/* ========================== the download sheet ============================ */
+
+/* One dimmed, blurred layer over the page with the two ways in laid side by
+   side. Ink on the page's own ink rather than a white card: the reader has
+   just left the page and this is the one thing in front of them, so it is
+   drawn as a layer over it, not as another page. */
+.dl {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--bg);
+  display: none;
+}
+.dl[open] { display: grid; place-items: center; }
+.dl::backdrop {
+  background: rgb(var(--ink-rgb) / .8);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+}
+.dl__inner {
+  position: relative;
+  width: min(1100px, 100%);
+  padding: 40px var(--gutter);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: clamp(28px, 6vw, 96px);
+  opacity: 0;
+  translate: 0 12px;
+  transition: opacity .32s var(--ease), translate .32s var(--swift);
+}
+/* `is-in` is added a frame after showModal(), so the transition has a start
+   state to run from — a style that matches on the first painted frame is the
+   start state, and nothing would move. */
+.dl.is-in .dl__inner { opacity: 1; translate: 0 0; }
+
+.dl__side {
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  text-align: center;
+}
+.dl__label {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+}
+.dl__qr {
+  width: min(300px, 62vw);
+  height: auto;
+  /* the SVG carries its own quiet zone; this is just the card's edge */
+  padding: 10px;
+  border-radius: 22px;
+  background: var(--surface);
+}
+.dl__rule {
+  width: 1px;
+  height: min(420px, 60vh);
+  background: rgb(var(--bg-rgb) / .28);
+}
+.dl__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 14px 34px;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  transition: opacity .22s var(--ease), transform .22s var(--swift);
+}
+.dl__btn:active { transform: scale(.98); }
+
+.dl__close {
+  position: fixed;
+  top: max(18px, env(safe-area-inset-top));
+  right: var(--gutter);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(var(--bg-rgb) / .12);
+  color: var(--bg);
+  cursor: pointer;
+}
+.dl__close svg { width: 18px; height: 18px; }
+.dl:focus-visible, .dl__close:focus-visible, .dl__btn:focus-visible {
+  outline-color: var(--bg);
+}
+/* the page must not scroll under it */
+.is-dl-open { overflow: hidden; }
+
+/* Stacked, and without the QR — a phone cannot scan itself. The rule turns
+   sideways-less: it simply goes. */
+@media (max-width: 700px) {
+  .dl__inner { grid-template-columns: 1fr; }
+  .dl__side--qr, .dl__rule { display: none; }
+}
+@media (hover: hover) {
+  .dl__btn:hover { opacity: .88; }
+  .dl__close:hover { background: rgb(var(--bg-rgb) / .22); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dl__inner, .dl__btn { transition: none; }
+}
+
 /* ================================ reveals ================================= */
 
 /* Gated on `.js`, like everything else the script has to undo. `.js` is added
@@ -1753,6 +1890,40 @@ main { position: relative; z-index: 2; }
   transition: opacity .8s var(--ease), translate .8s var(--swift), filter .8s var(--ease);
 }
 .js .reveal.is-in {
+  opacity: 1;
+  translate: 0 0;
+  filter: blur(0);
+}
+
+/* A row of like things arrives as a row, one after another, rather than as
+   seven items that all appeared on the same frame. The steps are short enough
+   that the last of seven is still in under half a second, so on a phone —
+   where they enter one at a time anyway — nobody waits on it. */
+.js .surfaces .reveal:nth-child(2) { transition-delay: .07s; }
+.js .surfaces .reveal:nth-child(3) { transition-delay: .14s; }
+.js .surfaces .reveal:nth-child(4) { transition-delay: .21s; }
+.js .surfaces .reveal:nth-child(5) { transition-delay: .28s; }
+.js .surfaces .reveal:nth-child(6) { transition-delay: .35s; }
+.js .surfaces .reveal:nth-child(7) { transition-delay: .42s; }
+.js .pledge .reveal:nth-child(2),
+.js .plans  .reveal:nth-child(2) { transition-delay: .1s; }
+.js .pledge .reveal:nth-child(3) { transition-delay: .2s; }
+
+/* Section titles settle a word at a time. stage.js wraps each word of a
+   `[data-words]` heading in a span and numbers it in `--w`; each word carries
+   the same blur-and-lift the block does, a beat later than the one before it,
+   so a title reads in the order it is written rather than arriving whole. The
+   spans are inline-block only so that translate and filter apply — the words
+   still wrap and balance as one line of text. */
+.js .reveal .w {
+  display: inline-block;
+  opacity: 0;
+  translate: 0 .3em;
+  filter: blur(5px);
+  transition: opacity .7s var(--ease), translate .7s var(--swift), filter .7s var(--ease);
+  transition-delay: calc(.06s * var(--w, 0));
+}
+.js .reveal.is-in .w {
   opacity: 1;
   translate: 0 0;
   filter: blur(0);
@@ -2209,7 +2380,8 @@ main { position: relative; z-index: 2; }
   /* the two devices sit where they are laid out; no drift */
   .duo__item { translate: none; }
 
-  .js .reveal {
+  .js .reveal,
+  .js .reveal .w {
     opacity: 1;
     translate: none;
     filter: none;

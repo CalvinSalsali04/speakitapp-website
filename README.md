@@ -293,10 +293,16 @@ which it stops reading as depth and starts reading as the page being uneven.
       hero and in the offer.
 - [ ] **Confirm the launch discount in App Store Connect — the page is already
       printing it.** `SUMMER_SALE_ENABLED` in `assets/stage.js` is now `true`,
-      so the offer shows *50% off annual*, `$29.99` struck through, `$14.99/year`
-      and the line *Pro is half price while Speak It launches*. Annual Pro must
-      actually be `$14.99` in App Store Connect, with all localized prices
-      confirmed. A page that disagrees with the sheet is a refund.
+      so the offer shows *50% off at launch* on both plans — `$3.99` struck
+      through above `$1.99/month`, `$29.99` struck through above `$14.99/year`,
+      the line *Pro is half price while Speak It launches*, and a note giving
+      the regular prices. Monthly Pro must actually be `$1.99` (regularly
+      `$3.99`) and annual `$14.99` (regularly `$29.99`) in App Store Connect,
+      with all localized prices confirmed. **The in-app paywall
+      (`SpeakItProView.swift`) currently shows monthly as a flat `$1.99` with no
+      regular price** — either give monthly the same scheduled-price treatment
+      as annual there, or drop the monthly strike-through here. A page that
+      disagrees with the sheet is a refund.
       **No end date is published anywhere**, deliberately — the site states the
       discount, not a deadline, so the offer can be ended or extended without
       the page having lied. Setting the flag back to `false` removes every trace
@@ -330,10 +336,13 @@ which it stops reading as depth and starts reading as the page being uneven.
 - [x] **Privacy and support use real routes.** The footer points to
       `privacy/index.html` and `support/index.html`; deploy them at
       `https://speakitapp.ca/privacy/` and `https://speakitapp.ca/support/`.
-- [ ] **Confirm `hello@speakit.app`** is a real, monitored address. It is the
-      only remaining `speakit.app` reference on the site and it is an address,
-      not a link target — if that mailbox does not exist, change it to one on
-      `speakitapp.ca` in `privacy/index.html` and `support/index.html`.
+- [x] **Support email is `support@speakitapp.ca`.** It replaced
+      `hello@speakit.app` (a domain Speak It does not own) in
+      `privacy/index.html`, `support/index.html` and the "Email us" link in the
+      main page's footer; `invite/index.html`'s App Store fallback now points at
+      `speakitapp.ca` too. Confirm the mailbox exists and is monitored before
+      the App Store listing goes live — it is also the contact in
+      `APP_STORE_SUBMISSION.md`.
 - [x] **`01-Today-v2.png` and `02-Memory-v2.png` are re-captured.** Shot from
       `SampleDataLibrary.Marketing` on an iPhone 17 Pro Max at 1320×2868; the
       recipe is in **The two screenshots** below.
@@ -459,6 +468,16 @@ single-block and multi-block interleaving.
 
 ## Accessibility and behaviour notes
 
+- **The bar's Download opens a sheet, not the offer.** `[data-download]` in
+  `index.html` is a native `<dialog>`: a dimmed, blurred layer with the QR on
+  the left ("Scan the QR code:"), a hairline, and an "Open App Store" button on
+  the right. `showModal()` gives it focus trapping, Escape and page inertness
+  for free; `stage.js` only opens it, closes it on a backdrop click or the ×,
+  and locks page scroll (`.is-dl-open`) while it is up. Under 700px the QR half
+  is hidden — a phone cannot scan itself — and only the button remains. Without
+  JS, or on a browser with no `showModal()`, the link keeps its `#get` href.
+  The button is a `[data-appstore]` link, so it takes the same URL swap as the
+  other two the day the listing goes live.
 - Focus is never suppressed.
 - The bubbles, the indicator and the devices are decorative and hidden from
   assistive tech. Nothing is available only through an image: in **What
