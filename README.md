@@ -129,9 +129,15 @@ promise in words a buyer already owns.
   six o'clock *and* the copy underneath, so bubbles are allowed to pass behind the
   words and every block of type carries a radial disc of background that
   dissolves them as they cross — the same halo the indicator uses.
-- **The indicator** is a CSS re-creation of `ListeningOrb.swift` — the same three
-  rings at the same 0.84 + 0.13·n spacing, the same 72:230 core, the same
-  waveform.
+- **The indicator is the app's ink drop.** The button itself is a drop of ink
+  whose edge ripples and grows with the input level and goes almost still in a
+  pause, with one faint echo behind it — the same shape and formula as the
+  app's listening screen, drawn by `paintInk()` in `stage.js` into an SVG in
+  the 230-unit space `ListeningOrb` uses. The three ring elements stay in the
+  markup because `cloudBounds()` measures the indicator from them; they are no
+  longer painted. Without the script the old rings and round core still show.
+  In the opening the drop is drawn 1.7× larger, because the headline's gap
+  was cut for the rings.
 
 ### The interactive parts
 
@@ -292,25 +298,19 @@ which it stops reading as depth and starts reading as the page being uneven.
       from their marketing guidelines before launch. It appears twice: in the
       hero and in the offer.
 - [ ] **Confirm the launch discount in App Store Connect — the page is already
-      printing it.** `SUMMER_SALE_ENABLED` in `assets/stage.js` is now `true`,
-      so the offer shows *50% off at launch* on both plans — `$3.99` struck
-      through above `$1.99/month`, `$29.99` struck through above `$14.99/year`,
-      the line *Pro is half price while Speak It launches*, and a note giving
-      the regular prices. Monthly Pro must actually be `$1.99` (regularly
-      `$3.99`) and annual `$14.99` (regularly `$29.99`) in App Store Connect,
-      with all localized prices confirmed. **The in-app paywall
-      (`SpeakItProView.swift`) currently shows monthly as a flat `$1.99` with no
-      regular price** — either give monthly the same scheduled-price treatment
-      as annual there, or drop the monthly strike-through here. A page that
-      disagrees with the sheet is a refund.
-      **No end date is published anywhere**, deliberately — the site states the
-      discount, not a deadline, so the offer can be ended or extended without
-      the page having lied. Setting the flag back to `false` removes every trace
-      of the sale in one edit.
-- [x] **The free tier the site advertises matches the app.** Resolved by
-      changing the app rather than the copy: `FreePlanAllowance` is a one-time
-      `lifetimeCaptureLimit = 10` that never resets, matching the offer
-      section's *ten captures, once*.
+      printing it.** Only annual is discounted: `$29.99` struck through above
+      `$14.99/year`, tagged *Half price until Oct 22*. Monthly is a flat
+      `$2.99` and is never discounted, which is what `SpeakItProView.swift`
+      shows. The sale switches itself off at `SALE_ENDS_AT` in
+      `assets/stage.js`, the same instant as `SummerLaunchSale.endsAt` in the
+      app (`2026-10-22T04:00:00Z`, midnight Toronto), so the page cannot go on
+      printing a price the App Store has stopped charging. Setting
+      `SUMMER_SALE_ENABLED` to `false` still removes every trace of the sale in
+      one edit. If the app's end date moves, move this one with it.
+- [x] **The free tier the site advertises matches the app.**
+      `FreePlanAllowance.lifetimeCaptureLimit` is `6` (speak-it #192), a
+      one-time allowance that never resets, and the offer section says *six
+      captures, once*. Change both together.
 - [x] **Pro's list is what Pro actually is.** The offer used to sell "Lock
       Screen, Action Button, Back Tap" as Pro features. They are not gated:
       `SpeakItProView.swift` sells exactly one thing, an unlimited capture

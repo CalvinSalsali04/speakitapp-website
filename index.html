@@ -13,6 +13,14 @@
 <meta property="og:title" content="Speak It — Say it before you forget it.">
 <meta property="og:description" content="Say it in your own words. What needs doing goes to Today, what is worth keeping goes to Memory, and your original words stay put.">
 <meta property="og:type" content="website">
+<!-- The link preview iMessage, Slack and X draw. The opening's finished frame
+     at 1200×630; bump the suffix if it is ever re-shot, for the same cache
+     reason the app screenshots carry one. -->
+<meta property="og:image" content="https://speakitapp.ca/assets/img/og-v1.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Speak It: Say it before you forget it.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/stage.css">
 </head>
@@ -395,6 +403,7 @@
           <div class="demo__chips">
             <button class="chip" type="button" data-demo-example="Take the bins out when I get home">A place, not a time</button>
             <button class="chip" type="button" data-demo-example="Remind me to book the dentist before the 20th">Book the dentist</button>
+            <button class="chip" type="button" data-demo-example="When I go to Costco, buy milk, eggs, and toothpaste">A shopping list</button>
             <button class="chip" type="button" data-demo-example="Idea — let people search by the words they actually said">An idea</button>
             <button class="chip" type="button" data-demo-example="Dr. Reyes at the clinic is on 416 555 0142">A phone number</button>
             <button class="chip" type="button" data-demo-example="Sam's partner is called Nadia and they hate cilantro">About a person</button>
@@ -405,8 +414,8 @@
           <div class="verdict__side">
             <p class="eyebrow">What lands in the app</p>
             <div class="approw">
-              <p class="approw__head"><span data-out-section>Now</span><span>1</span></p>
-              <div class="approw__row">
+              <p class="approw__head"><span data-out-section>Now</span><span data-out-count>1</span></p>
+              <div class="approw__row" data-out-row>
                 <span class="approw__check" data-out-check></span>
                 <span class="approw__body">
                   <span class="approw__title" data-out-title></span>
@@ -617,50 +626,46 @@
   <!-- ————————————————————————————— The offer ————————————————————————————— -->
   <section class="finale" id="get">
     <div class="finale__inner">
-      <h2 class="finale__title reveal" data-words>Ten captures free. No account either way.</h2>
-      <p class="finale__lede reveal" data-sale-only hidden>Pro is half price while Speak It launches.</p>
+      <h2 class="finale__title reveal" data-words>Six captures free. No account either way.</h2>
+      <p class="finale__lede reveal" data-sale-only hidden>Annual Pro is half price until October 22.</p>
 
       <div class="plans">
         <div class="plan reveal">
           <h3 class="plan__name">Free</h3>
           <p class="plan__price">$0</p>
           <ul class="plan__list">
-            <li>Ten captures, once — they never renew</li>
+            <li>Six captures, once — they never renew</li>
             <li>Every feature, nothing held back</li>
           </ul>
         </div>
 
         <div class="plan plan--pro reveal">
-          <h3 class="plan__name">
-            Pro
-            <span class="plan__tag" data-sale-only hidden>50% off at launch</span>
-          </h3>
+          <h3 class="plan__name">Pro</h3>
           <div class="plan__prices">
-            <!-- Both plans carry the launch discount. Each price is written
-                 three ways — the regular price struck through, the sale price,
-                 and the regular price on its own — and stage.js shows the pair
-                 that matches `SUMMER_SALE_ENABLED`, so ending the sale is one
-                 flag and not four edits. -->
+            <!-- Only annual carries the launch discount; monthly is never
+                 discounted, exactly as the in-app sheet shows it. The annual
+                 price is written three ways — the regular price struck through,
+                 the sale price, and the regular price on its own — and stage.js
+                 shows the pair that matches the sale window, so the page stops
+                 printing the discount the moment the app does. -->
             <p class="plan__price">
-              <span class="plan__billing">Monthly</span>
-              <s class="plan__was" data-sale-only hidden>$3.99</s>
-              <span data-sale-price>$1.99</span>
-              <span data-after-sale hidden>$3.99</span>
-              <span class="plan__period">/ month</span>
-            </p>
-            <p class="plan__price">
-              <span class="plan__billing">Annual · Best value</span>
+              <span class="plan__billing">Annual · Best value <span class="plan__tag" data-sale-only hidden>Half price until Oct 22</span></span>
               <s class="plan__was" data-sale-only hidden>$29.99</s>
               <span data-sale-price>$14.99</span>
               <span data-after-sale hidden>$29.99</span>
               <span class="plan__period">/ year</span>
+            </p>
+            <p class="plan__price">
+              <span class="plan__billing">Monthly</span>
+              <span>$2.99</span>
+              <span class="plan__period">/ month</span>
             </p>
           </div>
           <ul class="plan__list">
             <li>Unlimited captures — that is the whole difference</li>
             <li>Nothing you saved is locked away if you stop</li>
           </ul>
-          <p class="plan__note" data-sale-only hidden>US pricing. Regularly $3.99 a month or $29.99 a year; the launch price holds as long as the subscription does.</p>
+          <p class="plan__note" data-sale-only hidden>US pricing. Annual is regularly $29.99 a year; the $14.99 launch price runs until October 22, 2026.</p>
           <p class="plan__note">Renews automatically until cancelled.</p>
         </div>
       </div>
@@ -669,7 +674,7 @@
         <p class="eyebrow">Invite a friend</p>
         <h3>Give a month. Get a month.</h3>
         <p>Your friend gets one month of Speak It Pro free. After Apple verifies that they joined, you get one too.</p>
-        <p class="plan__note">Create a verified invite from Speak It → Account &amp; Settings → Plan.</p>
+        <p class="plan__note">Create a verified invite from Speak It → Settings → Plan.</p>
       </div>
 
       <div class="get reveal">
