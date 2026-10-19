@@ -147,6 +147,8 @@
   });
 
   var RX=0,RY=0,keepX=0,keepY=0,turnScale=1,born=0,frame=0,ringVisible=true;
+  var strip=false,rows=[];   /* on a phone: two drifting rows instead of a ring */
+  var DRIFT=11;             /* px per second along a row */
 
   /* The ellipse is asked of the bubbles rather than assumed: it is the widest
      ring that still keeps every thought inside the section. The ring turns, so
@@ -155,8 +157,12 @@
      text that decides how big the ring can be. */
   function measure(){
     if(!orbit||!bubbles.length)return;
-    hero.style.minHeight=(q('.hero__copy').offsetHeight+280)+'px';
     var w=orbit.clientWidth||window.innerWidth;
+    /* On a phone the type takes the whole width, so the ring can only be seen
+       above and below the words. Each of those gets a band of its own, the
+       way the desktop has room at the sides. */
+    var phone=w<760;
+    hero.style.minHeight=phone?'':(q('.hero__copy').offsetHeight+280)+'px';
     var h=orbit.clientHeight||600;
     var margin=32;
     var vertical=h/2;
@@ -180,12 +186,31 @@
     keepY=box.halfH+18;
     /* Wide enough that the sides clear the message where there is room for
        them to, tall enough that the top and bottom arcs clear it everywhere. */
+    /* A phone spreads the ring to the screen's own edges: the sides pass
+       behind the words and are faded there anyway, so it is only the top and
+       bottom arcs being widened, which is what fills the two bands. */
     RX=Math.max(0,readable);
     /* Far enough past the message that a thought coming over the top or under
        the bottom is at full strength rather than half-faded by the rule below —
        on a phone those two arcs are the only places the ring can be seen at
        all, so they have to be worth looking at. */
     RY=Math.max(0,Math.min(vertical,Math.max(RX*0.6,keepY+70)));
+    /* A phone has no room beside the words, and a ring squeezed into one
+       column piles the thoughts on top of each other. So the thoughts that sit
+       above the words on the ring become a row above them, drifting left, and
+       the ones below become a row below, drifting right: the same thoughts,
+       the same glass, side by side and never overlapping. */
+    strip=phone;
+    rows=[];
+    if(strip){
+      [-1,1].forEach(function(side){
+        var row=bubbles.filter(function(b){return (Math.sin(b.a*RAD)<0?-1:1)===side;})
+          .sort(function(a,b){return a.a-b.a;});
+        var at=0;
+        row.forEach(function(b){b.w=b.el.offsetWidth;b.start=at+b.w/2;at+=b.w+10;});
+        rows.push({items:row,length:at,y:side*(keepY+12),dir:-side});
+      });
+    }
     /* A bubble is the same size on a phone as on a desktop while the screen is
        a third of the width, so the same angle of tilt reads as a much bigger
        gesture. It is dialled back rather than dropped — the turn is the point. */
@@ -236,6 +261,7 @@
     var turn=(now%TURN)/TURN*-360;
     var elapsed=now-born;
     var settled=true;
+    if(strip){paintRows(t,elapsed);if(ringVisible&&!document.hidden)frame=requestAnimationFrame(paint);return;}
     for(var n=0;n<bubbles.length;n++){
       var b=bubbles[n];
       /* out of the indicator, one after another */
@@ -259,8 +285,21 @@
      where it was authored. It is what a reader who has asked for reduced motion
      gets, and it is a ring rather than an empty hero because the thoughts are
      the picture, not the animation. */
+  function paintRows(t,elapsed){
+    rows.forEach(function(row){
+      var L=row.length,off=t*DRIFT*row.dir;
+      row.items.forEach(function(b){
+        var e=elapsed==null?1:1-Math.pow(1-clamp((elapsed-HOLD-b.i*STEP)/FLIGHT,0,1),3);
+        var pos=((b.start+off)%L+L)%L;
+        var x=(pos-L/2)*e,y=(row.y+Math.sin(t*b.bobS+b.bobP)*2.5)*e;
+        b.el.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+(b.tilt*0.35).toFixed(2)+'deg) scale('+(0.06+0.94*e).toFixed(3)+')';
+        b.el.style.opacity=Math.min(1,e*2.6).toFixed(3);
+      });
+    });
+  }
   function settle(){
     paintDrop(0);
+    if(strip){paintRows(0,null);return;}
     for(var n=0;n<bubbles.length;n++){
       var b=bubbles[n],ang=b.a*RAD;
       var sx=RX*b.rr*Math.cos(ang),sy=RY*b.rr*Math.sin(ang);

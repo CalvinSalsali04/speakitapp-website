@@ -119,11 +119,13 @@ summary{list-style:none;display:flex;justify-content:space-between;gap:22px;padd
 @media(max-width:760px){
   :root{--gutter:22px;scroll-padding-top:85px}
   .topbar__inner{min-height:72px;padding-block:10px}.nav-link{display:none}.topbar nav{gap:0}.button--small{padding:10px 15px}.wordmark__name{font-size:1rem}.wordmark__glyph{width:18px}
-  .hero{padding-block:44px 48px;min-height:min(724px,88svh)}.orb{--u:60px}h1{font-size:clamp(2.5rem,9vw,3.7rem)}.hero__copy>.eyebrow{margin-bottom:16px}.hero__sub{margin-top:20px;font-size:1.0625rem;max-width:32ch}.hero__actions{margin-top:24px;gap:16px}.hero__trust{margin-top:18px}.hero__wash{inset:-2% -30%}
+  .hero{padding-block:88px 84px;min-height:0}.orb{--u:64px}h1{font-size:clamp(2.5rem,11.4vw,3.7rem)}.hero__copy>.eyebrow{margin-bottom:16px}.hero__sub{margin-top:20px;font-size:1.0625rem;max-width:32ch}.hero__actions{margin-top:24px;gap:16px}.hero__trust{margin-top:18px}.hero__wash{inset:-2% -30%}
   /* A bubble is the same size on a phone as on a desktop while the screen is a
      third of the width, so every other one is dropped rather than shrunk to
      illegibility. The ring is still a ring; there is just more air in it. */
-  .bubble:nth-child(2n){display:none}.bubble span{font-size:.875rem;padding:8px 14px}
+  .bubble span{font-size:.8125rem;padding:7px 13px}
+  /* the two rows run off both edges; fade them there instead of cutting them */
+  .orbit{-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
   .section{padding-block:48px}.section-head{display:block;margin-bottom:26px}.section-head>p{margin-top:15px;max-width:45ch}h2{font-size:2.05rem}
   .demo{grid-template-columns:1fr;gap:22px}.demo-result{scroll-margin-top:88px}.demo-result h3{font-size:1.7rem}.result-summary{min-height:0}.demo-result .saved-row{margin-top:17px}.demo-result .original{margin-top:19px}.result-next{margin-top:18px;padding-top:12px}.demo-scope{text-align:left;margin-top:19px}.example{padding:12px 15px}.demo-form{margin-top:20px}
   .field-bar{flex-wrap:wrap;gap:8px;padding:8px}.field-bar input{flex-basis:100%;min-height:44px;padding:8px 6px}.field-bar__mic{flex:1;justify-content:center}.field-bar__go{flex:1}
@@ -135,6 +137,7 @@ summary{list-style:none;display:flex;justify-content:space-between;gap:22px;padd
   .faq-section{grid-template-columns:1fr;gap:25px}.faq-section .eyebrow{max-width:none}.closing h2{font-size:2.35rem}
   .footer{gap:18px}.footer nav{gap:22px;flex-wrap:wrap}.footer .wordmark{width:100%}.footer>p{margin-top:0}.action-note{max-width:43ch}
 }
+@media(max-width:760px) and (max-height:700px){.hero{padding-top:64px}}
 @media(max-width:360px){:root{--gutter:18px}.hero__actions{gap:4px 16px}.hero__actions .button--text{min-height:44px;padding-block:6px}.bubble span{font-size:.875rem}.saved-row{padding:14px}.demo-result{padding:20px}.topbar .button span{display:none}.hero__trust{font-size:.8125rem;gap:7px}.footer nav{gap:17px}.price-options p{padding:12px}.price-options p>.price{font-size:1.75rem}}
 
 /* A personal invitation, kept separate from product promises. */
