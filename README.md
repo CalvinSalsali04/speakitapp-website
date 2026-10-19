@@ -25,37 +25,30 @@ offline" line. Its stylesheet and script, `assets/styles.css` and
 anything and can be deleted too; they are left in place only because deleting
 them was not asked for.
 
-## October 2026: the iPhone-first page
+## October 2026: the September page, brought up to date
 
-`index.html` now loads only `assets/home.css`, `assets/demo-parser.js` and
-`assets/home.js`. The `stage.*` pair below describes the previous page and is
-no longer referenced; it is left in place rather than deleted.
+`index.html` is the September rebuild from the app repo's `Website/` folder,
+which was committed there but never copied here, so it never went live. It
+loads only `assets/conversion.css`, `assets/demo-parser.js` and
+`assets/conversion.js`. The `stage.*` pair described further down is the
+August page and is no longer referenced. Changes made on top of September:
 
-Most visits come from a phone, so the page is written for a 390pt iPhone first
-and is about 4½ screens long (the previous page was about 10):
+- **6 free captures** everywhere (FreePlanAllowance.lifetimeCaptureLimit).
+- **Prices**: monthly $2.99, never discounted; annual $29.99 shown as $14.99
+  until `SALE_ENDS_AT` (midnight Toronto, 22 October 2026, the same instant as
+  SummerLaunchSale.endsAt), after which the page shows $29.99 by itself.
+- **Ink drop**: the headline indicator is the app's listening drop, drawn on a
+  canvas from the ring's own frame loop, still under Reduce Motion.
+- **Dark mode** follows the phone; the accent is black in light, white in dark.
+- **No sideways zoom on iPhone**: the hero's wash was wider than the screen,
+  so Safari zoomed the page out; the hero now clips it horizontally.
+- The two screenshots are `-v3`: the same images with the removed profile
+  button painted out. They still show the older Today layout (the black Now
+  card) and need retaking from the current app.
+- Support and privacy use the current Settings paths.
 
-1. **Hero** — headline, one sentence, Download, and "6 captures free · No
-   account · iOS 17 or later". It fits the first screen of an iPhone SE.
-2. **One tap. No sorting.** — three spoken sentences and the rows they become,
-   drawn in the app's row style rather than screenshotted, so they can't go
-   stale against the app.
-3. **Try one.** — the in-page preview, running on `demo-parser.js` (the same
-   parser and tests as the September page in the app repo's `Website/`).
-4. **Your words stay yours.** — four one-line facts.
-5. **6 captures free.** — annual and monthly, then Download.
-6. **Questions** — four native `<details>`.
-
-Rules it keeps: 17px body and 17px inputs (iOS Safari zooms smaller fields),
-every control at least 44pt, light and dark from `prefers-color-scheme` with
-the app's accent (black in light, white in dark), no scroll-pinned sections,
-and Reduce Motion stops the ink drop. Prices live in `index.html` and
-`LAUNCH_ANNUAL_PRICE` / `SALE_ENDS_AT` in `home.js`; `tests/pricing.test.cjs`
-checks them against the app's numbers. Run the tests with
-`node --test tests/*.cjs`.
-
-Until the App Store listing exists, Download opens a short sheet. When it
-does, set `meta[name="speak-it-app-store-url"]` and add the commented
-`apple-itunes-app` meta tag for Safari's own banner.
+`tests/pricing.test.cjs` checks the allowance and prices against
+`conversion.js`. Run `node --test tests/*.cjs`.
 
 ## Run it locally
 
