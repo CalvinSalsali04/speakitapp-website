@@ -11,3 +11,6 @@ invite/
 # Local tooling, not part of the deployed site.
 tools/
 README.md
+
+# Node tests for the preview parser and the prices; not part of the site.
+tests/
