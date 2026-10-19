@@ -25,6 +25,38 @@ offline" line. Its stylesheet and script, `assets/styles.css` and
 anything and can be deleted too; they are left in place only because deleting
 them was not asked for.
 
+## October 2026: the iPhone-first page
+
+`index.html` now loads only `assets/home.css`, `assets/demo-parser.js` and
+`assets/home.js`. The `stage.*` pair below describes the previous page and is
+no longer referenced; it is left in place rather than deleted.
+
+Most visits come from a phone, so the page is written for a 390pt iPhone first
+and is about 4½ screens long (the previous page was about 10):
+
+1. **Hero** — headline, one sentence, Download, and "6 captures free · No
+   account · iOS 17 or later". It fits the first screen of an iPhone SE.
+2. **One tap. No sorting.** — three spoken sentences and the rows they become,
+   drawn in the app's row style rather than screenshotted, so they can't go
+   stale against the app.
+3. **Try one.** — the in-page preview, running on `demo-parser.js` (the same
+   parser and tests as the September page in the app repo's `Website/`).
+4. **Your words stay yours.** — four one-line facts.
+5. **6 captures free.** — annual and monthly, then Download.
+6. **Questions** — four native `<details>`.
+
+Rules it keeps: 17px body and 17px inputs (iOS Safari zooms smaller fields),
+every control at least 44pt, light and dark from `prefers-color-scheme` with
+the app's accent (black in light, white in dark), no scroll-pinned sections,
+and Reduce Motion stops the ink drop. Prices live in `index.html` and
+`LAUNCH_ANNUAL_PRICE` / `SALE_ENDS_AT` in `home.js`; `tests/pricing.test.cjs`
+checks them against the app's numbers. Run the tests with
+`node --test tests/*.cjs`.
+
+Until the App Store listing exists, Download opens a short sheet. When it
+does, set `meta[name="speak-it-app-store-url"]` and add the commented
+`apple-itunes-app` meta tag for Safari's own banner.
+
 ## Run it locally
 
 ```bash

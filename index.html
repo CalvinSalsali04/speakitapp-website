@@ -2,732 +2,157 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!-- viewport-fit=cover so the page paints edge to edge on a notched iPhone; every
-     horizontal padding on the page goes through --gutter, which takes the safe
-     area into account, so nothing lands under the island or the rounded corners. -->
+<!-- viewport-fit=cover so the page paints edge to edge on a notched iPhone;
+     every horizontal padding goes through --gutter, which adds the safe area. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Speak It — Say it before you forget it.</title>
-<meta name="description" content="Speak It is an iPhone app for thoughts you have not sorted yet. Say it in your own words: what needs doing goes to Today, what is worth keeping goes to Memory, and the original stays exactly as you said it.">
-<meta name="color-scheme" content="light">
-<meta name="theme-color" content="#F8F8F6">
-<meta property="og:title" content="Speak It — Say it before you forget it.">
-<meta property="og:description" content="Say it in your own words. What needs doing goes to Today, what is worth keeping goes to Memory, and your original words stay put.">
+<title>Speak It: Say it before you forget it.</title>
+<meta name="description" content="Say a thought out loud. Speak It puts tasks in Today and keeps the rest in Memory, in your own words. For iPhone. 6 captures free.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F8F8F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#090909" media="(prefers-color-scheme: dark)">
+<!-- The verified App Store listing, e.g. https://apps.apple.com/app/speak-it/id1234567890.
+     Empty until it exists; every Download button reads it (assets/home.js). -->
+<meta name="speak-it-app-store-url" content="">
+<!-- Add Safari's own Download/Open banner the day the listing exists:
+     <meta name="apple-itunes-app" content="app-id=NUMERIC_APPLE_ID"> -->
+<meta property="og:title" content="Speak It: Say it before you forget it.">
+<meta property="og:description" content="Say it in your own words. What needs doing goes to Today. What is worth keeping goes to Memory.">
 <meta property="og:type" content="website">
-<!-- The link preview iMessage, Slack and X draw. The opening's finished frame
-     at 1200×630; bump the suffix if it is ever re-shot, for the same cache
-     reason the app screenshots carry one. -->
-<meta property="og:image" content="https://speakitapp.ca/assets/img/og-v1.png">
+<meta property="og:image" content="https://speakitapp.ca/assets/img/og-v2.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Speak It: Say it before you forget it.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/stage.css">
+<link rel="stylesheet" href="assets/home.css?v=20261019">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<a class="skip-link" href="#main">Skip to content</a>
-
-<header class="topbar">
-  <a class="wordmark" href="#top">
-    <svg class="wordmark__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <g fill="currentColor">
-        <rect x="3"  y="10" width="1.8" height="4"  rx=".9"/>
-        <rect x="7"  y="7"  width="1.8" height="10" rx=".9"/>
-        <rect x="11" y="4"  width="1.8" height="16" rx=".9"/>
-        <rect x="15" y="7"  width="1.8" height="10" rx=".9"/>
-        <rect x="19" y="10" width="1.8" height="4"  rx=".9"/>
-      </g>
-    </svg>
+<header class="bar">
+  <a class="mark" href="#top" aria-label="Speak It, back to top">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="currentColor">
+      <rect x="1.9" y="9.4" width="2.7" height="5.2" rx="1.35"/><rect x="6.3" y="6.5" width="2.7" height="11" rx="1.35"/>
+      <rect x="10.65" y="4" width="2.7" height="16" rx="1.35"/><rect x="15" y="6.5" width="2.7" height="11" rx="1.35"/>
+      <rect x="19.4" y="9.4" width="2.7" height="5.2" rx="1.35"/></g></svg>
     <span>Speak It</span>
   </a>
-
-  <a class="topbar__cta" href="#get" data-download-open>Download</a>
-  <span class="topbar__progress" aria-hidden="true"></span>
+  <a class="pill pill--small" href="#get" data-acquire>Get the app</a>
 </header>
-
-<!-- The download sheet. The bar's Download opens this instead of scrolling to
-     the offer: a QR to scan from a computer, or a button that opens the App
-     Store, on one dimmed layer over the page. It is a native <dialog>, so it
-     is modal, traps focus and closes on Escape without any script for that;
-     stage.js opens it and closes it on a backdrop click. Without JS, or on a
-     browser without showModal(), the link still goes to #get. On a phone the
-     QR half is dropped — a phone cannot scan itself — leaving the button. -->
-<dialog class="dl" data-download aria-labelledby="dl-title">
-  <!-- outside .dl__inner: that block is translated, which would make it the
-       containing block for a fixed button and pin the × to the block's corner
-       instead of the screen's -->
-  <button class="dl__close" type="button" data-download-close aria-label="Close">
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-      <path d="M6 6l12 12M18 6 6 18"/>
-    </svg>
-  </button>
-  <div class="dl__inner">
-    <h2 class="u-sr" id="dl-title">Download Speak It</h2>
-
-    <div class="dl__side dl__side--qr">
-      <p class="dl__label">Scan the QR code:</p>
-      <img class="dl__qr" src="assets/img/qr.svg" alt="QR code that opens the Speak It download page" width="300" height="300">
-    </div>
-
-    <span class="dl__rule" aria-hidden="true"></span>
-
-    <div class="dl__side">
-      <p class="dl__label">Open in App Store:</p>
-      <a class="dl__btn" data-appstore href="#" rel="noopener">Open App Store</a>
-    </div>
-  </div>
-</dialog>
-
-<!-- The app's own listening indicator. It is held over the gap in the headline
-     for the length of the opening and fades out as the last thought goes into
-     it; stage.js drives ring spread, core scale and bar amplitude. -->
-<div class="stage" data-stage aria-hidden="true">
-  <div class="orb" data-orb data-state="live">
-    <span class="orb__halo"></span>
-    <span class="orb__ring" style="--i:0"></span>
-    <span class="orb__ring" style="--i:1"></span>
-    <span class="orb__ring" style="--i:2"></span>
-    <span class="orb__core">
-      <svg class="orb__wave" viewBox="0 0 44 30" focusable="false">
-        <g fill="#F8F8F6">
-          <rect x="0"  y="10" width="3" height="10" rx="1.5" style="--t:1.30s;--d:-.20s"/>
-          <rect x="7"  y="6"  width="3" height="18" rx="1.5" style="--t:1.05s;--d:-.55s"/>
-          <rect x="14" y="2"  width="3" height="26" rx="1.5" style="--t:.86s;--d:-.10s"/>
-          <rect x="21" y="7"  width="3" height="16" rx="1.5" style="--t:1.18s;--d:-.75s"/>
-          <rect x="28" y="3"  width="3" height="24" rx="1.5" style="--t:.94s;--d:-.35s"/>
-          <rect x="35" y="9"  width="3" height="12" rx="1.5" style="--t:1.22s;--d:-.62s"/>
-          <rect x="41" y="12" width="3" height="6"  rx="1.5" style="--t:1.40s;--d:-.05s"/>
-        </g>
-      </svg>
-    </span>
-  </div>
-</div>
 
 <main id="main">
 
-  <!-- ——————————————————————————————— Opening ———————————————————————————————
-       The headline and the indicator are here from the first frame. A day's
-       worth of spoken thoughts scatters out of the indicator on arrival,
-       turning as it goes; scrolling draws every one of them back in, and the
-       download block takes the scroll hint's place under the standfirst.
+  <!-- The whole pitch fits the first screen of an iPhone SE (375×667): what it
+       is, what to do, and the button. Nothing here waits on script. -->
+  <section class="hero" id="top">
+    <canvas class="drop" data-drop width="120" height="120" aria-hidden="true"></canvas>
+    <h1>Say it before you forget it.</h1>
+    <p class="lede">Talk to your iPhone. To-dos land in Today. Everything else is kept in Memory, in your own words.</p>
+    <a class="pill" href="#get" data-acquire>
+      Download for iPhone
+    </a>
+    <p class="fine">6 captures free · No account · iOS 17 or later</p>
+  </section>
 
-       `--a` is where a bubble settles, `--rr` nudges it in or out, `--s` is its
-       size, and `--i` is its place in the stagger. stage.js owns the rest.
-       ——————————————————————————————————————————————————————————————————— -->
-  <section class="opening" id="top" data-opening>
-    <div class="opening__pin">
-
-      <div class="field" data-field aria-hidden="true">
-        <p class="bubble"           style="--a:6deg;--rr:1.00;--s:.96;--i:3"><span>call the pharmacy at six</span></p>
-        <p class="bubble bubble--r" style="--a:32deg;--rr:1.06;--s:.86;--i:9"><span>Mum’s birthday — blue scarf</span></p>
-        <p class="bubble"           style="--a:57deg;--rr:1.09;--s:.92;--i:1"><span>gate code 4417</span></p>
-        <p class="bubble bubble--r" style="--a:83deg;--rr:1.02;--s:.82;--i:12"><span>ask Priya about Q3</span></p>
-        <p class="bubble"           style="--a:108deg;--rr:1.00;--s:.98;--i:6"><span>book the dentist</span></p>
-        <p class="bubble bubble--r" style="--a:134deg;--rr:1.07;--s:.88;--i:0"><span>bins out when I get home</span></p>
-        <p class="bubble"           style="--a:159deg;--rr:1.04;--s:.84;--i:10"><span>Dr. Reyes — 416 555 0142</span></p>
-        <p class="bubble bubble--r" style="--a:185deg;--rr:1.00;--s:1.00;--i:4"><span>parking: level 3, row H</span></p>
-        <p class="bubble"           style="--a:210deg;--rr:1.06;--s:.90;--i:13"><span>renew the passport</span></p>
-        <p class="bubble bubble--r" style="--a:236deg;--rr:1.02;--s:.82;--i:7"><span>Sam’s partner is Nadia</span></p>
-        <p class="bubble"           style="--a:261deg;--rr:1.00;--s:.94;--i:2"><span>Nadia hates cilantro</span></p>
-        <p class="bubble bubble--r" style="--a:287deg;--rr:1.07;--s:.86;--i:11"><span>flight lands at 9:40</span></p>
-        <p class="bubble"           style="--a:312deg;--rr:1.03;--s:.92;--i:5"><span>the spare key is with Tom</span></p>
-        <p class="bubble bubble--r" style="--a:338deg;--rr:1.01;--s:.84;--i:8"><span>the bakery on Cross Street</span></p>
-      </div>
-
-      <div class="opening__edge opening__edge--top" aria-hidden="true"></div>
-      <div class="opening__edge opening__edge--bottom" aria-hidden="true"></div>
-
-      <p class="eyebrow opening__eyebrow">For iPhone</p>
-
-      <!-- One centred stack. The standfirst and the download block are in the
-           flow under the headline rather than pinned to the foot of the
-           screen, so they can never be overlapped by it; stage.js moves the
-           indicator to sit in the gap instead of the other way round. -->
-      <div class="hero">
-        <h1 class="hero__title">
-          <span class="hero__line">Say it before</span>
-          <span class="hero__gap" data-gap aria-hidden="true"></span>
-          <span class="hero__line">you forget it.</span>
-        </h1>
-
-        <div class="hero__foot">
-          <!-- The three questions a hero has to answer, in one sentence: what
-               it is, what you do, and why it is not the Reminders app. The
-               third is carried by "without deciding where it goes first" —
-               every other app on the phone makes you pick the app before you
-               are allowed to say the thing. -->
-          <p class="hero__sub">
-            One tap, then talk — without deciding where it goes first. What needs
-            doing turns up in Today. What is worth keeping stays in Memory.
-          </p>
-
-          <div class="hero__slot">
-            <span class="hint" aria-hidden="true">
-              <span>Scroll</span>
-              <span class="hint__rule"></span>
-            </span>
-
-            <div class="hero__get get" data-hero-get>
-              <a class="appstore" data-appstore href="#" rel="noopener">
-                <svg class="appstore__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path fill="currentColor" d="M12 3.6 8.2 10.2h7.6L12 3.6ZM4.2 12.4h15.6a.9.9 0 0 1 0 1.8H4.2a.9.9 0 0 1 0-1.8Zm1.5 3.6h12.6l-1.4 3.3a1.8 1.8 0 0 1-1.7 1.1H8.8a1.8 1.8 0 0 1-1.7-1.1L5.7 16Z"/>
-                </svg>
-                <span class="appstore__text">
-                  <span class="appstore__small">Download on the</span>
-                  <span class="appstore__big">App Store</span>
-                </span>
-              </a>
-
-              <div class="qr">
-                <img src="assets/img/qr.svg" alt="QR code that opens the Speak It download page" width="74" height="74">
-                <span class="qr__label"><b>Scan to install</b><span data-appstore-url></span></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+  <!-- One capture, three outcomes, drawn in the app's own row style. Drawn
+       rather than screenshotted so it can never go stale against the app. -->
+  <section class="block" aria-labelledby="how-title">
+    <h2 id="how-title">One tap. No sorting.</h2>
+    <div class="lands">
+      <figure class="land">
+        <blockquote>“Remind me to call Mum tomorrow at 5 PM”</blockquote>
+        <figcaption>
+          <span class="where">Today</span>
+          <span class="row"><span class="tick" aria-hidden="true"></span><b>Call Mum</b><time data-tomorrow>Tomorrow, 5:00 PM</time></span>
+        </figcaption>
+      </figure>
+      <figure class="land">
+        <blockquote>“Take the bins out when I get home”</blockquote>
+        <figcaption>
+          <span class="where">Today</span>
+          <span class="row"><span class="tick" aria-hidden="true"></span><b>Take the bins out</b><time>Home</time></span>
+        </figcaption>
+      </figure>
+      <figure class="land">
+        <blockquote>“Oh, Daniel takes oat milk, not soy”</blockquote>
+        <figcaption>
+          <span class="where">Memory</span>
+          <span class="row"><span class="note" aria-hidden="true"></span><b>Daniel prefers oat milk</b><time>People</time></span>
+        </figcaption>
+      </figure>
     </div>
   </section>
 
-  <!-- ————————————————————————————— What happens ——————————————————————————
-       Three thoughts said into one capture, and the three different things
-       they turn into.
-
-       Each result is one object rather than four: a slab of the app's own
-       background carrying the app's section header, the app's row, and — under
-       a hairline — the sentence that produced it. That last line is the
-       original wording, kept where the app keeps it. An earlier version put the
-       quote in a separate speech bubble above a white card with its own border,
-       a tail, a connecting thread and an explanatory footnote: five bordered
-       pieces per thought, four of which do not exist anywhere in the app.
-
-       Every group is authored with where it sits (`--x`, `--y`, `--w`, `--z`)
-       and where it flies in from (`--fx`, `--fy`, `--fz`) — the second is the
-       offset back to the phone's transcript line, so each sentence converges on
-       the exact words it left. `--i` is its place in the sequence.
-       ——————————————————————————————————————————————————————————————————— -->
-  <section class="section emerge" id="how" data-emerge>
-    <div class="shell">
-      <header class="section__head section__head--centre reveal">
-        <p class="eyebrow">What happens</p>
-        <h2 class="section__title" data-words>Say it. It lands where it belongs.</h2>
-      </header>
-
-      <div class="scene" data-scene>
-        <span class="scene__ground" aria-hidden="true"></span>
-
-        <!-- the phone, and the capture screen inside it -->
-        <div class="tilt" aria-hidden="true">
-          <span class="tilt__btn tilt__btn--action"></span>
-          <span class="tilt__btn tilt__btn--up"></span>
-          <span class="tilt__btn tilt__btn--down"></span>
-
-          <div class="tilt__body">
-            <div class="tilt__screen">
-              <span class="tilt__island"></span>
-
-              <p class="cap__bar"><span class="cap__x"></span><span class="cap__word">Speak It</span></p>
-
-              <span class="cap__flare"></span>
-              <span class="orb cap__orb" data-state="live">
-                <span class="orb__ring" style="--i:0"></span>
-                <span class="orb__ring" style="--i:1"></span>
-                <span class="orb__ring" style="--i:2"></span>
-                <span class="orb__core">
-                  <svg class="orb__wave" viewBox="0 0 44 30" focusable="false">
-                    <g fill="#F8F8F6">
-                      <rect x="0"  y="10" width="3" height="10" rx="1.5" style="--t:1.30s;--d:-.20s"/>
-                      <rect x="7"  y="6"  width="3" height="18" rx="1.5" style="--t:1.05s;--d:-.55s"/>
-                      <rect x="14" y="2"  width="3" height="26" rx="1.5" style="--t:.86s;--d:-.10s"/>
-                      <rect x="21" y="7"  width="3" height="16" rx="1.5" style="--t:1.18s;--d:-.75s"/>
-                      <rect x="28" y="3"  width="3" height="24" rx="1.5" style="--t:.94s;--d:-.35s"/>
-                      <rect x="35" y="9"  width="3" height="12" rx="1.5" style="--t:1.22s;--d:-.62s"/>
-                      <rect x="41" y="12" width="3" height="6"  rx="1.5" style="--t:1.40s;--d:-.05s"/>
-                    </g>
-                  </svg>
-                </span>
-              </span>
-
-              <p class="cap__state">Listening</p>
-              <p class="cap__hint">Just speak. I’ll save after a natural pause.</p>
-
-              <p class="cap__live">
-                <span>Take the bins out when I get home</span>
-                <span>Remind me to call Mum tomorrow at five</span>
-                <span>Oh, Daniel takes oat milk, not soy</span>
-              </p>
-
-              <p class="cap__type">
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-                  <rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
-                  <path d="M6.5 9.5h.01M10 9.5h.01M13.5 9.5h.01M17 9.5h.01M6.5 12.5h.01M10 12.5h.01M13.5 12.5h.01M17 12.5h.01M8 15.5h8"/>
-                </svg>
-                Type instead
-              </p>
-
-              <span class="tilt__glass" aria-hidden="true"></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 1 · a place, not a time -->
-        <article class="emit emit--a">
-          <span class="emit__sheet" aria-hidden="true"></span>
-          <div class="emit__app">
-            <p class="emit__where">Today</p>
-            <div class="approw">
-              <div class="approw__row">
-                <span class="approw__check"></span>
-                <span class="approw__body">
-                  <span class="approw__title">Take the bins out</span>
-                  <span class="approw__meta">Personal · Task</span>
-                </span>
-                <span class="approw__time">
-                  <svg class="approw__pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 21c4.2-4.6 6.3-7.9 6.3-10.5a6.3 6.3 0 1 0-12.6 0C5.7 13.1 7.8 16.4 12 21Z"/><circle cx="12" cy="10.3" r="2.3"/>
-                  </svg>
-                  Home
-                </span>
-              </div>
-            </div>
-          </div>
-          <p class="emit__said"><span>“Take the bins out when I get home”</span></p>
-        </article>
-
-        <!-- 2 · a time you spoke rather than picked -->
-        <article class="emit emit--b">
-          <span class="emit__sheet" aria-hidden="true"></span>
-          <div class="emit__app">
-            <p class="emit__where">Today</p>
-            <div class="approw">
-              <div class="approw__row">
-                <span class="approw__check"></span>
-                <span class="approw__body">
-                  <span class="approw__title">Call Mum</span>
-                  <span class="approw__meta">People · Person follow-up</span>
-                </span>
-                <span class="approw__time" data-tomorrow>Aug 18, 5:00 PM</span>
-              </div>
-            </div>
-          </div>
-          <p class="emit__said"><span>“Remind me to call Mum tomorrow at five”</span></p>
-        </article>
-
-        <!-- 3 · nothing to do, worth keeping -->
-        <article class="emit emit--c">
-          <span class="emit__sheet" aria-hidden="true"></span>
-          <div class="emit__app">
-            <p class="emit__where">Memory</p>
-            <div class="approw">
-              <div class="approw__row">
-                <span class="approw__mark">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
-                    <rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/>
-                  </svg>
-                </span>
-                <span class="approw__body">
-                  <span class="approw__title">Daniel prefers oat milk</span>
-                  <span class="approw__meta">People · Note</span>
-                </span>
-                <span class="approw__time" data-today-date>Aug 17</span>
-              </div>
-            </div>
-          </div>
-          <p class="emit__said"><span>“Oh, Daniel takes oat milk, not soy”</span></p>
-        </article>
-      </div>
+  <section class="block" id="try" aria-labelledby="try-title">
+    <h2 id="try-title">Try one.</h2>
+    <p class="sub">Tap an example or type your own. Nothing here is saved.</p>
+    <div class="chips">
+      <button class="chip" type="button" data-example="Call the dentist tomorrow at 9 AM">A reminder</button>
+      <button class="chip" type="button" data-example="Take the bins out when I get home">A place</button>
+      <button class="chip" type="button" data-example="Gate code is 4417">A detail</button>
+      <button class="chip" type="button" data-example="Idea: a walk after every long call">An idea</button>
     </div>
+    <form class="ask" data-form>
+      <label class="sr" for="thought">Type a thought</label>
+      <input id="thought" name="thought" type="text" autocomplete="off" enterkeyhint="done" placeholder="Book the dentist" maxlength="240">
+      <button class="pill pill--small" type="submit">Try</button>
+    </form>
+    <output class="result" data-result hidden>
+      <span class="where" data-where></span>
+      <span class="row"><span class="tick" data-mark aria-hidden="true"></span><b data-title></b><time data-detail></time></span>
+      <span class="why" data-why></span>
+    </output>
+    <noscript><p class="sub">The preview needs JavaScript.</p></noscript>
   </section>
 
-  <!-- —————————————————————————————— The demo —————————————————————————————
-       The app's capture screen, running in the page: the same indicator, the
-       same two lines, the same "Type instead" escape hatch.
-       ——————————————————————————————————————————————————————————————————— -->
-  <section class="section section--tint" id="try">
-    <div class="shell">
-      <header class="section__head section__head--centre reveal">
-        <p class="eyebrow">Try it</p>
-        <h2 class="section__title" data-words>Say something.</h2>
-        <p class="section__sub">Then watch where it goes.</p>
-      </header>
-
-      <div class="demo reveal" data-demo>
-        <div class="demo__stage">
-          <button class="mic" type="button" data-mic>
-            <span class="orb" data-mic-orb data-state="calm" aria-hidden="true">
-              <span class="orb__ring" style="--i:0"></span>
-              <span class="orb__ring" style="--i:1"></span>
-              <span class="orb__ring" style="--i:2"></span>
-              <span class="orb__core">
-                <svg class="orb__wave" viewBox="0 0 44 30" focusable="false">
-                  <g fill="#F8F8F6">
-                    <rect x="0"  y="10" width="3" height="10" rx="1.5" style="--t:1.30s;--d:-.20s"/>
-                    <rect x="7"  y="6"  width="3" height="18" rx="1.5" style="--t:1.05s;--d:-.55s"/>
-                    <rect x="14" y="2"  width="3" height="26" rx="1.5" style="--t:.86s;--d:-.10s"/>
-                    <rect x="21" y="7"  width="3" height="16" rx="1.5" style="--t:1.18s;--d:-.75s"/>
-                    <rect x="28" y="3"  width="3" height="24" rx="1.5" style="--t:.94s;--d:-.35s"/>
-                    <rect x="35" y="9"  width="3" height="12" rx="1.5" style="--t:1.22s;--d:-.62s"/>
-                    <rect x="41" y="12" width="3" height="6"  rx="1.5" style="--t:1.40s;--d:-.05s"/>
-                  </g>
-                </svg>
-              </span>
-            </span>
-            <span class="u-sr" data-mic-label>Start listening</span>
-          </button>
-
-          <p class="demo__state" data-demo-state>Tap to speak</p>
-          <p class="demo__hint" data-demo-hint>Say anything you don’t want to forget.</p>
-          <p class="demo__live" data-demo-live aria-live="polite"></p>
-
-          <div class="demo__actions" data-demo-actions>
-            <button class="ghost" type="button" data-demo-type>
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-                <rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
-                <path d="M6.5 9.5h.01M10 9.5h.01M13.5 9.5h.01M17 9.5h.01M6.5 12.5h.01M10 12.5h.01M13.5 12.5h.01M17 12.5h.01M8 15.5h8"/>
-              </svg>
-              Type instead
-            </button>
-            <button class="ghost" type="button" data-demo-stop hidden>Done</button>
-          </div>
-
-          <form class="demo__form" data-demo-form hidden>
-            <label class="u-sr" for="demo-input">Type a thought</label>
-            <input class="demo__input" id="demo-input" type="text" autocomplete="off"
-                   placeholder="Remind me to call the pharmacy Thursday at six"
-                   maxlength="140" data-demo-input>
-            <button class="btn btn--solid" type="submit">Capture</button>
-          </form>
-
-          <div class="demo__chips">
-            <button class="chip" type="button" data-demo-example="Take the bins out when I get home">A place, not a time</button>
-            <button class="chip" type="button" data-demo-example="Remind me to book the dentist before the 20th">Book the dentist</button>
-            <button class="chip" type="button" data-demo-example="When I go to Costco, buy milk, eggs, and toothpaste">A shopping list</button>
-            <button class="chip" type="button" data-demo-example="Idea — let people search by the words they actually said">An idea</button>
-            <button class="chip" type="button" data-demo-example="Dr. Reyes at the clinic is on 416 555 0142">A phone number</button>
-            <button class="chip" type="button" data-demo-example="Sam's partner is called Nadia and they hate cilantro">About a person</button>
-          </div>
-        </div>
-
-        <output class="verdict" data-demo-out hidden>
-          <div class="verdict__side">
-            <p class="eyebrow">What lands in the app</p>
-            <div class="approw">
-              <p class="approw__head"><span data-out-section>Now</span><span data-out-count>1</span></p>
-              <div class="approw__row" data-out-row>
-                <span class="approw__check" data-out-check></span>
-                <span class="approw__body">
-                  <span class="approw__title" data-out-title></span>
-                  <span class="approw__meta" data-out-meta></span>
-                </span>
-                <span class="approw__time" data-out-time></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="verdict__side">
-            <div class="verdict__block">
-              <p class="eyebrow">Lands in</p>
-              <p class="verdict__where"><b data-out-dest></b></p>
-              <p class="verdict__why" data-out-why></p>
-            </div>
-            <div class="verdict__block">
-              <p class="eyebrow">Your words, kept</p>
-              <p class="verdict__said" data-out-said></p>
-            </div>
-          </div>
-        </output>
-
-        <p class="demo__note">
-          Speech here is your browser’s, and may go to its service. In the app it
-          uses Apple’s Speech framework — see the <a href="privacy/">privacy policy</a>.
-        </p>
-      </div>
-    </div>
+  <section class="block" aria-labelledby="yours-title">
+    <h2 id="yours-title">Your words stay yours.</h2>
+    <ul class="facts">
+      <li><b>On your iPhone.</b> Nothing goes to a Speak It server. Sync, if you turn it on, uses your own iCloud.</li>
+      <li><b>No account.</b> Open it and start talking.</li>
+      <li><b>Your exact words, kept.</b> Every item keeps what you actually said.</li>
+      <li><b>Starts from anywhere.</b> Action Button, Back Tap, Lock Screen, Control Center or Siri.</li>
+    </ul>
+    <p class="fine fine--left">Speech-to-text uses Apple’s Speech service and may need a connection. <a href="privacy/">Privacy policy</a></p>
   </section>
 
-  <!-- ————————————————————————————— The two screens ————————————————————————
-       The app itself, at size, with one line each. Nothing is drawn on top of
-       these — an earlier version rang the rows with a marker and the rings
-       aged worse than the screenshots did.
-       ——————————————————————————————————————————————————————————————————— -->
-  <section class="section duo" id="screens">
-    <div class="shell">
-      <header class="section__head section__head--centre reveal">
-        <p class="eyebrow">Two screens</p>
-        <h2 class="section__title" data-words>Today does. Memory knows.</h2>
-        <p class="section__sub">There is nowhere else for a thought to go, so there is nothing for you to file.</p>
-      </header>
-
-      <div class="duo__grid">
-        <figure class="duo__item reveal" data-parallax="-1">
-          <div class="phone" aria-hidden="true">
-            <span class="phone__btn phone__btn--action"></span>
-            <span class="phone__btn phone__btn--up"></span>
-            <span class="phone__btn phone__btn--down"></span>
-            <span class="phone__btn phone__btn--power"></span>
-            <div class="phone__screen">
-              <img src="assets/img/01-Today-v2.png" width="1320" height="2868" loading="lazy" decoding="async" alt="">
-            </div>
-          </div>
-          <figcaption class="duo__say">
-            <h3 class="duo__name">Today</h3>
-            <p class="duo__note">What needs doing, overdue first.</p>
-          </figcaption>
-        </figure>
-
-        <figure class="duo__item reveal" data-parallax="1">
-          <div class="phone" aria-hidden="true">
-            <span class="phone__btn phone__btn--action"></span>
-            <span class="phone__btn phone__btn--up"></span>
-            <span class="phone__btn phone__btn--down"></span>
-            <span class="phone__btn phone__btn--power"></span>
-            <div class="phone__screen">
-              <img src="assets/img/02-Memory-v2.png" width="1320" height="2868" loading="lazy" decoding="async" alt="">
-            </div>
-          </div>
-          <figcaption class="duo__say">
-            <h3 class="duo__name">Memory</h3>
-            <p class="duo__note">What is worth keeping, in the words you said.</p>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
+  <section class="block" id="get" aria-labelledby="price-title">
+    <h2 id="price-title">6 captures free.</h2>
+    <p class="sub">Then Pro is unlimited. That is the only difference.</p>
+    <dl class="plans">
+      <div><dt>Annual <span class="tag" data-sale hidden>Half price until Oct 22</span></dt>
+        <dd><s data-sale hidden>$29.99</s> <span data-annual>$29.99</span><small>/ year</small></dd></div>
+      <div><dt>Monthly</dt><dd>$2.99<small>/ month</small></dd></div>
+    </dl>
+    <p class="fine fine--left">US prices. Renews until you cancel. Anything you saved stays yours if you stop.</p>
+    <a class="pill" href="#get" data-acquire>Download for iPhone</a>
   </section>
 
-  <!-- ———————————————————————————— Where it starts ————————————————————————— -->
-  <section class="section section--tint" id="anywhere">
-    <div class="shell">
-      <header class="section__head section__head--centre reveal">
-        <p class="eyebrow">Where it starts</p>
-        <h2 class="section__title" data-words>Seven ways in.</h2>
-        <p class="section__sub">Every one starts a capture without you finding an icon first.</p>
-      </header>
-
-      <ul class="surfaces">
-        <li class="surface reveal">
-          <span class="surface__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="5" y="2.5" width="14" height="19" rx="3"/><path d="M9 7h6M9 10.5h6"/>
-            </svg>
-          </span>
-          <span class="surface__name">Lock Screen</span>
-          <span class="surface__note">A widget on the wake screen</span>
-        </li>
-        <li class="surface reveal">
-          <span class="surface__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M4 8.5v4"/>
-            </svg>
-          </span>
-          <span class="surface__name">Action Button</span>
-          <span class="surface__note">One press, iPhone 15 Pro and later</span>
-        </li>
-        <li class="surface reveal">
-          <span class="surface__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="6" y="2.5" width="12" height="19" rx="3"/><circle cx="12" cy="12" r="2.2"/><path d="M8.4 8.4a5 5 0 0 0 0 7.2M15.6 8.4a5 5 0 0 1 0 7.2"/>
-            </svg>
-          </span>
-          <span class="surface__name">Back Tap</span>
-          <span class="surface__note">Two taps on the back of the phone</span>
-        </li>
-        <li class="surface reveal">
-          <span class="surface__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 8h6M14 8h6M4 16h10M18 16h2"/><circle cx="12" cy="8" r="2"/><circle cx="16" cy="16" r="2"/>
-            </svg>
-          </span>
-          <span class="surface__name">Control Center</span>
-          <span class="surface__note">A control you can put anywhere</span>
-        </li>
-        <li class="surface reveal">
-          <span class="surface__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-              <path d="M12 3.5v17M8 6.5v11M16 6.5v11M4.5 10v4M19.5 10v4"/>
-            </svg>
-          </span>
-          <span class="surface__name">Siri</span>
-          <span class="surface__note">Hands free, through an App Intent</span>
-        </li>
-        <li class="surface reveal">
-          <span class="surface__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3.5v11M8.5 7 12 3.5 15.5 7"/><path d="M5.5 12.5v6a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-6"/>
-            </svg>
-          </span>
-          <span class="surface__name">Share sheet</span>
-          <span class="surface__note">Send text in from anything else</span>
-        </li>
-        <li class="surface reveal">
-          <span class="surface__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-              <rect x="2.5" y="7" width="19" height="10" rx="5"/><circle cx="7.5" cy="12" r="2"/><path d="M13 10.5h5M13 13.5h3"/>
-            </svg>
-          </span>
-          <span class="surface__name">Live Activity</span>
-          <span class="surface__note">A running capture stays on screen</span>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ————————————————————————————— Your words ————————————————————————————— -->
-  <section class="section" id="privacy">
-    <div class="shell">
-      <ul class="pledge">
-        <li class="pledge__item reveal">
-          <span class="pledge__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M9.5 12.2l1.8 1.8 3.4-3.6"/>
-            </svg>
-          </span>
-          <span class="pledge__name">Stays on your iPhone</span>
-          <span class="pledge__note">Thoughts, tasks, memories and places are stored on the device. There is no Speak It server holding them.</span>
-        </li>
-        <li class="pledge__item reveal">
-          <span class="pledge__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20.5a7.2 7.2 0 0 1 14.4 0"/>
-            </svg>
-          </span>
-          <span class="pledge__name">No account</span>
-          <span class="pledge__note">Nothing to sign up for. Turn on sync and it goes to your own private iCloud container, not to us.</span>
-        </li>
-        <li class="pledge__item reveal">
-          <span class="pledge__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-              <!-- The arcs are drawn already broken around the slash rather than
-                   crossed by it. A continuous fan with a line through it reads as
-                   a scribble at 24px; the gap is what makes it a wifi symbol that
-                   has been switched off. -->
-              <path d="M2 8.8a15 15 0 0 1 4.2-2.6"/>
-              <path d="M22 8.8a15 15 0 0 0-11.3-3.8"/>
-              <path d="M5 12.9a10 10 0 0 1 5.2-2.7"/>
-              <path d="M19 12.9a10 10 0 0 0-2-1.5"/>
-              <path d="M8.5 16.4a5 5 0 0 1 7 0"/>
-              <path d="M12 20h.01"/>
-              <path d="m2.6 2.6 18.8 18.8"/>
-            </svg>
-          </span>
-          <!-- "Works offline", scoped so it stays true. Speech recognition sets
-               `requiresOnDeviceRecognition = false` and lets iOS pick between its
-               local and network recognisers, so a flat no-connection claim would
-               overstate the one part of the app that can reach the network. The
-               privacy page says the same thing at length. -->
-          <span class="pledge__name">Works offline</span>
-          <span class="pledge__note">Open it, search it and check things off with no signal at all. Only the speech-to-text may reach Apple, and only while you speak.</span>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ————————————————————————————— The offer ————————————————————————————— -->
-  <section class="finale" id="get">
-    <div class="finale__inner">
-      <h2 class="finale__title reveal" data-words>Six captures free. No account either way.</h2>
-      <p class="finale__lede reveal" data-sale-only hidden>Annual Pro is half price until October 22.</p>
-
-      <div class="plans">
-        <div class="plan reveal">
-          <h3 class="plan__name">Free</h3>
-          <p class="plan__price">$0</p>
-          <ul class="plan__list">
-            <li>Six captures, once — they never renew</li>
-            <li>Every feature, nothing held back</li>
-          </ul>
-        </div>
-
-        <div class="plan plan--pro reveal">
-          <h3 class="plan__name">Pro</h3>
-          <div class="plan__prices">
-            <!-- Only annual carries the launch discount; monthly is never
-                 discounted, exactly as the in-app sheet shows it. The annual
-                 price is written three ways — the regular price struck through,
-                 the sale price, and the regular price on its own — and stage.js
-                 shows the pair that matches the sale window, so the page stops
-                 printing the discount the moment the app does. -->
-            <p class="plan__price">
-              <span class="plan__billing">Annual · Best value <span class="plan__tag" data-sale-only hidden>Half price until Oct 22</span></span>
-              <s class="plan__was" data-sale-only hidden>$29.99</s>
-              <span data-sale-price>$14.99</span>
-              <span data-after-sale hidden>$29.99</span>
-              <span class="plan__period">/ year</span>
-            </p>
-            <p class="plan__price">
-              <span class="plan__billing">Monthly</span>
-              <span>$2.99</span>
-              <span class="plan__period">/ month</span>
-            </p>
-          </div>
-          <ul class="plan__list">
-            <li>Unlimited captures — that is the whole difference</li>
-            <li>Nothing you saved is locked away if you stop</li>
-          </ul>
-          <p class="plan__note" data-sale-only hidden>US pricing. Annual is regularly $29.99 a year; the $14.99 launch price runs until October 22, 2026.</p>
-          <p class="plan__note">Renews automatically until cancelled.</p>
-        </div>
-      </div>
-
-      <div class="referral-offer reveal" data-referrals hidden>
-        <p class="eyebrow">Invite a friend</p>
-        <h3>Give a month. Get a month.</h3>
-        <p>Your friend gets one month of Speak It Pro free. After Apple verifies that they joined, you get one too.</p>
-        <p class="plan__note">Create a verified invite from Speak It → Settings → Plan.</p>
-      </div>
-
-      <div class="get reveal">
-        <a class="appstore" data-appstore href="#" rel="noopener">
-          <svg class="appstore__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M12 3.6 8.2 10.2h7.6L12 3.6ZM4.2 12.4h15.6a.9.9 0 0 1 0 1.8H4.2a.9.9 0 0 1 0-1.8Zm1.5 3.6h12.6l-1.4 3.3a1.8 1.8 0 0 1-1.7 1.1H8.8a1.8 1.8 0 0 1-1.7-1.1L5.7 16Z"/>
-          </svg>
-          <span class="appstore__text">
-            <span class="appstore__small">Download on the</span>
-            <span class="appstore__big">App Store</span>
-          </span>
-        </a>
-
-        <div class="qr">
-          <img src="assets/img/qr.svg" alt="QR code that opens the Speak It download page" width="74" height="74">
-          <span class="qr__label"><b>Scan to install</b><span data-appstore-url></span></span>
-        </div>
-      </div>
-
-      <p class="finale__foot reveal">
-        iPhone, iOS 17 or later · Free to start · No account · Purchases handled
-        by the App Store.
-      </p>
+  <section class="block" aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions</h2>
+    <div class="faq">
+      <details><summary>Why not just use Notes or Reminders?</summary><p>You don’t have to choose a list first. Say it, and Speak It decides whether it’s something to do or something to keep.</p></details>
+      <details><summary>What if it gets something wrong?</summary><p>Your original words are always kept. Tap an item to fix its title, date or reminder.</p></details>
+      <details><summary>What happens after 6 captures?</summary><p>The 6 free captures are once, not monthly. After that, Pro adds unlimited captures. Everything you saved stays.</p></details>
+      <details><summary>Does it work without signal?</summary><p>Your saved items, search and checking things off all work offline. Turning speech into text may need a connection.</p></details>
     </div>
   </section>
 
 </main>
 
-<footer class="footer">
-  <a class="wordmark" href="#top">
-    <svg class="wordmark__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <g fill="currentColor">
-        <rect x="3"  y="10" width="1.8" height="4"  rx=".9"/>
-        <rect x="7"  y="7"  width="1.8" height="10" rx=".9"/>
-        <rect x="11" y="4"  width="1.8" height="16" rx=".9"/>
-        <rect x="15" y="7"  width="1.8" height="10" rx=".9"/>
-        <rect x="19" y="10" width="1.8" height="4"  rx=".9"/>
-      </g>
-    </svg>
-    <span>Speak It</span>
-  </a>
-
-  <nav class="footer__links" aria-label="Footer">
-    <a href="privacy/">Privacy Policy</a>
-    <a href="#try">Try it</a>
-    <a href="#get">Pricing</a>
-    <a href="support/">Support</a>
-    <a href="mailto:support@speakitapp.ca">Email us</a>
-  </nav>
-
-  <p class="footer__legal">© 2026 Speak It · Made by one person · iPhone and App Store are trademarks of Apple Inc.</p>
+<footer class="foot">
+  <p>Made by Calvin. Questions? <a href="mailto:support@speakitapp.ca">support@speakitapp.ca</a></p>
+  <nav aria-label="Footer"><a href="privacy/">Privacy</a><a href="support/">Support</a></nav>
+  <p class="fine fine--left">© 2026 Speak It. iPhone and App Store are trademarks of Apple Inc.</p>
 </footer>
 
-<script src="assets/stage.js"></script>
+<dialog class="sheet" data-sheet aria-labelledby="sheet-title">
+  <h2 id="sheet-title">Almost here.</h2>
+  <p>Speak It isn’t on the App Store yet. Email <a href="mailto:support@speakitapp.ca">support@speakitapp.ca</a> and Calvin will send you the link the day it is.</p>
+  <form method="dialog"><button class="pill">OK</button></form>
+</dialog>
+
+<script src="assets/demo-parser.js?v=20261019"></script>
+<script src="assets/home.js?v=20261019"></script>
 </body>
 </html>
