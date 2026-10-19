@@ -24,13 +24,16 @@
      output for the apps.apple.com URL the day the listing goes live. */
   var APP_STORE_URL = 'https://speakitapp.ca';
 
-  /* The launch discount on Pro — half off both plans, $3.99 → $1.99 a month
-     and $29.99 → $14.99 a year. `SUMMER_SALE_ENABLED` must not be true unless
-     App Store Connect really is charging the sale prices — the page prints
-     the numbers, and a page that disagrees with the sheet is a refund. No end
-     date is published: the site states the discount, not a deadline, so the
-     offer can be ended or extended without the page having lied. */
-  var SUMMER_SALE_ENABLED = true;
+  /* The launch discount on annual Pro — $29.99 → $14.99 a year. Monthly is
+     $2.99 and is never discounted, matching `SpeakItProView.swift`.
+     `SUMMER_SALE_ENABLED` must not be true unless App Store Connect really is
+     charging the sale price — the page prints the number, and a page that
+     disagrees with the sheet is a refund. The sale ends on its own at
+     `SALE_ENDS_AT`, the same instant as `SummerLaunchSale.endsAt` in the app
+     (midnight Toronto on October 22, 2026), so the page can never go on
+     advertising a price the App Store has stopped charging. */
+  var SALE_ENDS_AT = Date.parse('2026-10-22T04:00:00Z');
+  var SUMMER_SALE_ENABLED = true && Date.now() < SALE_ENDS_AT;
   var REFERRALS_ENABLED = false;
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -453,6 +456,74 @@
     }
   }
 
+  /* ------------------------------------------------------ the ink drop --- */
+
+  /* The app's listening indicator is no longer three rings around a button:
+     the button itself is a drop of ink whose edge ripples and grows with the
+     voice and goes almost still in a pause. Every `.orb` on the page gets the
+     same drop, drawn in the 230-unit space `ListeningOrb` uses (the core is
+     72 of those units across, so the resting drop sits just outside it), and
+     each frame redraws one filled path and one faint echo — no rings, no blur.
+     The rings stay in the markup for their measurements (`cloudBounds()` reads
+     the indicator's size from them) and are simply not painted. */
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var inks = [];
+
+  document.querySelectorAll('.orb').forEach(function (el) {
+    var svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'orb__ink');
+    svg.setAttribute('viewBox', '-115 -115 230 230');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    var echo = document.createElementNS(SVG_NS, 'path');
+    echo.setAttribute('class', 'orb__echo');
+    var drop = document.createElementNS(SVG_NS, 'path');
+    drop.setAttribute('class', 'orb__drop');
+    svg.appendChild(echo);
+    svg.appendChild(drop);
+    el.insertBefore(svg, el.querySelector('.orb__core'));
+    el.classList.add('orb--ink');
+    inks.push({ el: el, echo: echo, drop: drop, shown: 0, phone: el.classList.contains('cap__orb') });
+  });
+
+  function inkPath(t, amp, scale, lag) {
+    var base = 40 + amp * 16;
+    var e = 1.2 + amp * 10;
+    var d = '';
+    for (var i = 0; i <= 72; i++) {
+      var a = (i / 72) * Math.PI * 2 - lag;
+      var r = (base + e * (0.5 * Math.sin(3 * a + t * 1.9)
+                         + 0.3 * Math.sin(5 * a - t * 2.6 + 1)
+                         + 0.2 * Math.sin(2 * a + t * 1.1 + 2))) * scale;
+      var b = a + lag;
+      d += (i ? 'L' : 'M') + (Math.cos(b) * r).toFixed(2) + ' ' + (Math.sin(b) * r).toFixed(2);
+    }
+    return d + 'Z';
+  }
+
+  /* `level` is whatever the orb's own driver already writes to `--level`:
+     scroll energy in the opening, the transcript's arrival in the demo. The
+     phone in "What happens" has no driver, so it talks to itself in phrases
+     and pauses the way the app's simulated preview does. */
+  function paintInk(now) {
+    var t = now / 1000;
+    inks.forEach(function (ink) {
+      var level;
+      if (ink.phone) {
+        var phrase = Math.sin(t * 0.9) > -0.35;
+        level = phrase ? 0.18 + 0.45 * Math.pow(Math.abs(Math.sin(t * Math.PI * 2.1 + Math.sin(t * 1.7) * 2)), 1.6) : 0.02;
+      } else {
+        level = parseFloat(ink.el.style.getPropertyValue('--level')) || 0;
+        if (ink.el === orb) level = 0.22 + level * 0.78;
+      }
+      ink.shown += (clamp(level, 0, 1) - ink.shown) * 0.12;
+      var amp = ink.shown;
+      ink.echo.setAttribute('d', inkPath(t, amp, 1.22 + amp * 0.25, 0.4));
+      ink.echo.style.fillOpacity = (0.05 + amp * 0.05).toFixed(3);
+      ink.drop.setAttribute('d', inkPath(t, amp, 1, 0));
+    });
+  }
+
   /* -------------------------------------------------- the indicator ------ */
 
   /* It breathes on its own and reacts to how hard the page is being scrolled,
@@ -480,6 +551,7 @@
       syncOpening();
       paintField(now);
       paintMic(now);
+      paintInk(now);
 
       window.requestAnimationFrame(frame);
     }
@@ -495,6 +567,7 @@
     }
     dockStage();
     syncOpening();
+    paintInk(0);
   }
 
   var running = false;
@@ -710,6 +783,35 @@
     };
   }
 
+  /* A list said in one breath. The app gives every item its own row (#177)
+     and, for any place that is not Home or Work, uses the place only to name
+     the list — "When I go to Costco, buy milk, eggs and toothpaste" is three
+     Costco rows and no arrival alert (#191). An explicit buy/get/order is what
+     makes it a list, so unknown nouns are still accepted after one. */
+  var LIST_VERB = /\b(?:buy|get|grab|order|pick up)\s+(?:some\s+)?(.+)$/i;
+  var NAMED_PLACE = /\b(?:[Ww]hen|[Oo]nce|[Ww]hile)\s+(?:[Ii]|[Ww]e)(?:['’]m|\s+am)?\s+(?:go|going|get|getting|arrive|arriving|stop|stopping|am|at)?\s*(?:to|at|by|in)\s+(?:the\s+)?([A-Z][\w'’&]*(?:\s+[A-Z][\w'’&]*)*)/;
+
+  function listFor(said) {
+    var body = said.replace(WHERE, '').replace(NAMED_PLACE, '');
+    var m = body.match(LIST_VERB);
+    if (!m) return null;
+    var items = m[1].replace(/[.!?\s]+$/, '')
+      .split(/\s*,\s*(?:and\s+)?|\s+and\s+/i)
+      .map(function (item) {
+        return item.replace(/^(?:some|a|an|the|more)\s+/i, '').trim();
+      })
+      .filter(function (item) { return item && item.split(/\s+/).length <= 4; });
+    if (items.length < 2) return null;
+
+    var where = said.match(WHERE);
+    var named = where ? null : said.match(NAMED_PLACE);
+    return {
+      items: items.map(function (item) { return item.charAt(0).toUpperCase() + item.slice(1); }),
+      alert: where ? placeName(where) : null,
+      list: named ? named[1] : null
+    };
+  }
+
   function titleFor(text) {
     var title = text.trim()
       .replace(FILLER, '')
@@ -827,21 +929,56 @@
     if (!said) { if (demoInput) demoInput.focus(); return; }
 
     var verdict = classify(said);
+    var list = listFor(said);
+    var rows = list ? list.items.map(function (item) {
+      return {
+        title: item,
+        meta: list.list ? 'Shopping · ' + list.list : 'Shopping',
+        time: list.alert || 'No date'
+      };
+    }) : [{ title: titleFor(said), meta: verdict.meta, time: verdict.time }];
+
+    if (list) {
+      verdict = {
+        today: true,
+        dest: 'Today',
+        section: list.alert ? 'Now' : 'When you have time',
+        why: list.alert
+          ? 'A list said in one breath becomes one row per item, and the list keeps one alert for when you ' + (list.alert === 'Home' ? 'get home.' : 'get to work.')
+          : list.list
+            ? 'A list said in one breath becomes one row per item. ' + list.list + ' names the list; only Home and Work set an arrival alert.'
+            : 'A list said in one breath becomes one row per item, so each one can be ticked off on its own.'
+      };
+    }
 
     /* textContent throughout: whatever is said or typed is shown as words,
        never parsed as markup. */
     demoOut.querySelector('[data-out-section]').textContent = verdict.section;
-    demoOut.querySelector('[data-out-title]').textContent = titleFor(said);
-    demoOut.querySelector('[data-out-meta]').textContent = verdict.meta;
-    demoOut.querySelector('[data-out-time]').textContent = verdict.time;
+    demoOut.querySelector('[data-out-count]').textContent = String(rows.length);
     demoOut.querySelector('[data-out-dest]').textContent = verdict.dest;
     demoOut.querySelector('[data-out-why]').textContent = verdict.why;
     demoOut.querySelector('[data-out-said]').textContent = '“' + said + '”';
 
-    /* a task gets a circle to tick; a memory gets the app's note mark */
-    var mark = demoOut.querySelector('[data-out-check]');
-    mark.className = verdict.today ? 'approw__check' : 'approw__mark';
-    mark.innerHTML = verdict.today ? '' : NOTE_GLYPH;
+    /* One template row, cloned per item; the clones are dropped on every new
+       capture so a list never leaves rows behind for the next sentence. */
+    var template = demoOut.querySelector('[data-out-row]');
+    demoOut.querySelectorAll('[data-out-clone]').forEach(function (el) { el.remove(); });
+    rows.forEach(function (row, n) {
+      var el = n ? template.cloneNode(true) : template;
+      if (n) {
+        el.setAttribute('data-out-clone', '');
+        el.removeAttribute('data-out-row');
+        template.parentNode.appendChild(el);
+      }
+      el.querySelector('[data-out-title]').textContent = row.title;
+      el.querySelector('[data-out-meta]').textContent = row.meta;
+      el.querySelector('[data-out-time]').textContent = row.time;
+
+      /* a task gets a circle to tick; a memory gets the app's note mark */
+      var mark = el.querySelector('[data-out-check]');
+      mark.className = verdict.today ? 'approw__check' : 'approw__mark';
+      mark.innerHTML = verdict.today ? '' : NOTE_GLYPH;
+    });
 
     demoOut.hidden = false;
     demoOut.classList.remove('is-new');

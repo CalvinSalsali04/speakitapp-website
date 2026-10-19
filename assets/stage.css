@@ -257,6 +257,33 @@ a { color: inherit; text-decoration: none; }
   to   { transform: scaleY(1); }
 }
 
+/* The ink drop. stage.js draws it into `.orb__ink` and marks the orb
+   `orb--ink`; without the script the rings and round core stay as they were,
+   so a page whose script never loaded still shows an indicator. */
+.orb__ink {
+  position: absolute;
+  width: var(--u);
+  height: var(--u);
+  max-width: none;
+  overflow: visible;
+}
+.orb__drop {
+  fill: var(--ink);
+  filter: drop-shadow(0 5px 10px rgb(var(--ink-rgb) / .18));
+}
+.orb__echo { fill: var(--ink); fill-opacity: .06; }
+.orb--ink .orb__ring { visibility: hidden; }
+/* The opening's gap was cut for the rings, which reach well past the core.
+   A drop at the app's proportions would sit small in it, so here the drop
+   and the button it carries are drawn larger together. */
+.stage .orb__ink { width: calc(var(--u) * 1.7); height: calc(var(--u) * 1.7); }
+.stage .orb--ink .orb__core { width: calc(var(--u) * .313 * 1.7); }
+.orb--ink .orb__core,
+.demo.is-listening .orb--ink .orb__core {
+  background: transparent;
+  box-shadow: none;
+}
+
 .orb[data-state="live"] { --ring-a: .5; }
 .orb[data-state="calm"] { --ring-a: .26; }
 
@@ -859,6 +886,13 @@ main { position: relative; z-index: 2; }
   grid-template-columns: auto 1fr auto;
   align-items: start;
   gap: 12px;
+}
+/* Rows after the first are the items of a spoken list: the app separates
+   them with its own hairline divider. */
+.approw__row + .approw__row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
 }
 /* `Image(systemName: "circle")` at 24pt in `speakMuted` — a full-strength
    ring, not a hairline. Drawn faint, it read as a disabled control. */
@@ -1685,6 +1719,7 @@ main { position: relative; z-index: 2; }
   text-transform: uppercase;
   color: var(--muted);
 }
+.plan__billing .plan__tag { margin-left: 8px; vertical-align: 1px; }
 .plan__was {
   font-size: 20px;
   font-weight: 400;
