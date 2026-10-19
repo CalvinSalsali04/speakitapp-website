@@ -29,6 +29,25 @@
     downloadDialog.addEventListener('click',function(event){if(event.target===downloadDialog){var rect=downloadDialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)downloadDialog.close();}});
     q('[data-close-download]').addEventListener('click',function(){downloadDialog.close();});
   }
+  /* Light by default; the switch in the top bar flips to dark and remembers
+     it on this device. The head's inline script applies a saved choice before
+     the first paint. */
+  var root=document.documentElement,toggle=q('[data-theme-toggle]'),themeColor=q('meta[name="theme-color"]');
+  function applyTheme(dark){
+    if(dark)root.dataset.theme='dark';else delete root.dataset.theme;
+    if(themeColor)themeColor.content=dark?'#0B0B0A':'#F8F8F6';
+    if(toggle)toggle.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');
+    document.dispatchEvent(new CustomEvent('speak-it:theme'));
+  }
+  if(toggle){
+    applyTheme(root.dataset.theme==='dark');
+    toggle.addEventListener('click',function(){
+      var dark=root.dataset.theme!=='dark';
+      applyTheme(dark);
+      try{localStorage.setItem('speakit-theme',dark?'dark':'light');}catch(e){/* private mode: the choice lasts this visit */}
+    });
+  }
+
   /* The annual launch discount, and only the annual one. It mirrors
      SummerLaunchSale in the app, which strikes a regular price through for the
      annual plan and never for monthly — a page claiming a monthly discount the
@@ -85,7 +104,7 @@
     };
     sizeDrop();paintDrop(0);
     window.addEventListener('resize',function(){sizeDrop();paintDrop(motion.matches?0:performance.now());});
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){paintDrop(motion.matches?0:performance.now());});
+    document.addEventListener('speak-it:theme',function(){paintDrop(motion.matches?0:performance.now());});
   }
 
   /* ————————————————————————— the thought ring —————————————————————————

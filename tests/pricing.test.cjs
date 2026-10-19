@@ -35,5 +35,5 @@ test('the launch price is annual-only and ends when the app ends it',()=>{
   assert.match(script,/var LAUNCH_ANNUAL_PRICE='\$14\.99';/);
   assert.match(script,/var SALE_ENDS_AT=Date\.parse\('2026-10-22T04:00:00Z'\);/);
   assert.match(script,/if\(Date\.now\(\)>=SALE_ENDS_AT\)LAUNCH_ANNUAL_PRICE='';/);
-  assert.match(text,/data-launch-note hidden>Annual launch price until October 22\./);
+  assert.match(text,/data-launch-note hidden>Annual is half price until Oct 22</);
 });
