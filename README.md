@@ -34,9 +34,10 @@ loads only `assets/conversion.css`, `assets/demo-parser.js` and
 August page and is no longer referenced. Changes made on top of September:
 
 - **6 free captures** everywhere (FreePlanAllowance.lifetimeCaptureLimit).
-- **Prices**: monthly $2.99, never discounted; annual $29.99 shown as $14.99
-  until `SALE_ENDS_AT` (midnight Toronto, 22 October 2026, the same instant as
-  SummerLaunchSale.endsAt), after which the page shows $29.99 by itself.
+- **Prices (November 3 owner launch decision)**: monthly US$2.99 and annual
+  US$14.99, matching the current App Store Connect schedule. These are regular
+  launch prices, with no strikethrough, deadline or expired sale override.
+  StoreKit remains the source of localized prices in the app.
 - **Ink drop**: the headline indicator is the app's listening drop, drawn on a
   canvas from the ring's own frame loop, still under Reduce Motion.
 - **Dark mode** follows the phone; the accent is black in light, white in dark.

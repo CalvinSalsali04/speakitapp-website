@@ -48,25 +48,8 @@
     });
   }
 
-  /* The annual launch discount, and only the annual one. It mirrors
-     SummerLaunchSale in the app, which strikes a regular price through for the
-     annual plan and never for monthly — a page claiming a monthly discount the
-     sheet does not show is a refund. It ends at the same instant as
-     SummerLaunchSale.endsAt (midnight Toronto, 22 October 2026), so the page
-     cannot keep advertising a price the App Store has stopped charging. Empty
-     LAUNCH_ANNUAL_PRICE removes the offer entirely. */
-  var LAUNCH_ANNUAL_PRICE='$14.99';
-  var SALE_ENDS_AT=Date.parse('2026-10-22T04:00:00Z');
-  if(Date.now()>=SALE_ENDS_AT)LAUNCH_ANNUAL_PRICE='';
-  if(LAUNCH_ANNUAL_PRICE){
-    var wasPrice=q('[data-annual-was]'),nowPrice=q('[data-annual-price]');
-    if(wasPrice&&nowPrice){
-      wasPrice.textContent=nowPrice.textContent;
-      wasPrice.hidden=false;
-      nowPrice.textContent=LAUNCH_ANNUAL_PRICE;
-      q('[data-launch-note]').hidden=false;
-    }
-  }
+  /* Launch prices are regular USD prices in index.html, matching the current
+     App Store Connect schedule. No timed discount or price override is active. */
 
   /* ——————————————————————————— the ink drop ———————————————————————————
      The app's listening indicator, in the break in the headline: one drop of

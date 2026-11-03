@@ -1,7 +1,7 @@
 /* What the page may say about money. A page that disagrees with the App Store
    sheet is a refund, so these mirror the app: 6 free captures
    (FreePlanAllowance.lifetimeCaptureLimit), monthly $2.99 never discounted,
-   annual $29.99 with its launch price, and annual below twelve months. */
+   annual $14.99 without an expired discount, and annual below twelve months. */
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -27,13 +27,13 @@ test('monthly is $2.99 and never struck through',()=>{
   assert.equal(amount(plan('month')),2.99);
   assert.doesNotMatch(plan('month'),/<s[\s>]|data-annual/);
 });
-test('annual is $29.99 and costs less than twelve monthly payments',()=>{
-  assert.equal(amount(plan('year')),29.99);
+test('annual is $14.99 and costs less than twelve monthly payments',()=>{
+  assert.equal(amount(plan('year')),14.99);
   assert.ok(amount(plan('year'))<12*amount(plan('month')));
 });
-test('the launch price is annual-only and ends when the app ends it',()=>{
-  assert.match(script,/var LAUNCH_ANNUAL_PRICE='\$14\.99';/);
-  assert.match(script,/var SALE_ENDS_AT=Date\.parse\('2026-10-22T04:00:00Z'\);/);
-  assert.match(script,/if\(Date\.now\(\)>=SALE_ENDS_AT\)LAUNCH_ANNUAL_PRICE='';/);
-  assert.match(text,/data-launch-note hidden>Annual is half price until Oct 22</);
+test('neither plan advertises a discount and scripts cannot restore the expired price',()=>{
+  assert.doesNotMatch(plan('year'),/<s[\s>]/);
+  assert.doesNotMatch(text,/data-launch-note|half price|until Oct 22|\$29\.99/);
+  assert.doesNotMatch(script,/LAUNCH_ANNUAL_PRICE|SALE_ENDS_AT|\$29\.99/);
+  assert.doesNotMatch(script,/nowPrice\.textContent\s*=/);
 });
