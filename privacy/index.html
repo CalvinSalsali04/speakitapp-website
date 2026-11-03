@@ -29,8 +29,8 @@
   <header><a href="../">← Speak It</a></header>
   <main>
     <h1>Privacy, in plain language.</h1>
-    <p class="lede">Speak It is designed to keep what you say on your iPhone. We do not operate a server that stores your thoughts.</p>
-    <p class="meta">Effective and last updated August 17, 2026</p>
+    <p class="lede">Your library and original words are stored on your iPhone. Optional AI organization sends capture text to OpenAI only after you choose to enable it.</p>
+    <p class="meta">Last updated November 2, 2026</p>
 
     <h2>No account required</h2>
     <p>Speak It does not require a profile, email address, or sign-in. Optional profile fields stay on your device and are not sent to Speak It.</p>
@@ -42,12 +42,18 @@
     <p>During voice capture, a protected recovery recording may be stored temporarily on your device. It is deleted after a successful save; interrupted recordings can be retried or deleted from Capture history. Speak It never uploads these recordings to its own servers.</p>
     <p>Transcription uses Apple's Speech framework. Depending on the device, language, and Apple's service availability, Apple may process audio over an internet connection under Apple's privacy policy.</p>
 
+    <h2>AI organization</h2>
+    <p>You choose whether to enable AI organization before any capture text is sent. When enabled, each new in-app spoken or typed capture sends its text, capture time, and time zone to OpenAI to separate and organize tasks, lists, and memories. That text may contain personal information you choose to say or type. Your audio, contact list, other captures, and location coordinates are not included automatically. Your original transcript remains on your iPhone.</p>
+    <p>AI organization requires Wi-Fi and is subject to an allowance of up to 50 attempts per day and a monthly usage budget. If it is unavailable, disabled, or at its allowance, Speak It continues organizing on your device. You can change your choice in Settings; turning it off stops future requests and does not recall requests already processed.</p>
+    <p>A secure Speak It service verifies Apple-signed app-download and purchase information before forwarding a request. It stores a hashed app-specific identity and content-free usage counters to enforce the free allowance, subscription access, and AI limits across devices. Your Apple Account email address and payment details are not sent to this service or OpenAI. The service does not save capture text or model output; hosting providers may process ordinary connection and security metadata.</p>
+    <p>Requests use OpenAI’s API with response storage disabled. This is not a promise of zero retention: OpenAI may retain content in abuse-monitoring logs, normally for up to 30 days, with legal or safety exceptions. We do not opt your capture content in to OpenAI’s voluntary model-training or data-sharing programs. Read <a href="https://developers.openai.com/api/docs/guides/your-data">OpenAI’s API data controls</a>.</p>
+
     <h2>Reminders, places, and Apple Maps</h2>
     <p>Notification and location access are requested only when a feature needs them. Place reminders use iOS region monitoring; Speak It does not record a location history or transmit your coordinates to analytics. Address search and reverse geocoding send the lookup to Apple Maps.</p>
 
     <h2>Content-free analytics</h2>
     <p>If analytics is enabled, Speak It sends limited product events such as a capture being saved, a task being completed, or a subscription screen being viewed. Events use a random installation identifier. Location lookup and person profiles are disabled.</p>
-    <p>Analytics never includes recordings, transcripts, task titles, memory text, names, email addresses, search terms, place names, or coordinates. You can disable analytics at any time in Settings → Privacy. Analytics is processed by PostHog in the United States.</p>
+    <p>Analytics never includes recordings, transcripts, task titles, memory text, names, email addresses, search terms, place names, or coordinates. You can disable analytics at any time in Account &amp; Settings. Analytics is processed by PostHog in the United States.</p>
 
     <h2>Purchases</h2>
     <p>Apple handles subscriptions and offer-code redemption. Speak It never receives your payment-card or bank details. The app receives Apple-signed entitlement information so it can unlock Pro.</p>
@@ -57,7 +63,7 @@
     <p>The referral service does not receive your thoughts, recordings, tasks, memories, profile fields, contacts, places, or analytics events. Referral credentials are protected in Keychain, one-time Apple codes are encrypted on the server, and transaction signatures are verified using Apple's official App Store Server Library.</p>
 
     <h2>Retention and deletion</h2>
-    <p>Your on-device library remains until you delete it in the app or remove the app. Analytics retention is governed by the configured PostHog project. Referral and reward records are kept while the program operates and as reasonably needed to restore rewards, prevent duplicate claims, meet accounting obligations, and resolve support requests.</p>
+    <p>Your on-device library remains until you delete it in the app or remove the app. AI usage counters and a hashed app identity are retained to maintain allowances and prevent resets by reinstalling; these records do not contain capture text. Deleting a capture on your iPhone does not recall a request already processed by OpenAI. For privacy requests about service records, contact us below; we may retain minimal usage or anti-abuse records needed to prevent repeated free allowances. Analytics retention is governed by the configured PostHog project. Referral and reward records are kept while the program operates and as reasonably needed to restore rewards, prevent duplicate claims, meet accounting obligations, and resolve support requests.</p>
     <p>You can request deletion of referral data by emailing <a href="mailto:support@speakitapp.ca">support@speakitapp.ca</a>. We may retain the minimum transaction or anti-fraud record required to prevent a deleted identity from claiming the same reward again.</p>
 
     <h2>Tracking and advertising</h2>
